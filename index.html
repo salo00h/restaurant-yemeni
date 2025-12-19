@@ -2,15 +2,12 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
 <title>RIZ HADRAMI</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
+*{box-sizing:border-box}
 body{
     margin:0;
     padding:12px;
@@ -23,57 +20,37 @@ body{
     margin:auto;
     background:#fff;
     padding:14px;
-    border-radius:20px;
-    box-shadow:0 12px 35px rgba(0,0,0,.12);
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
 }
 h1{text-align:center;color:#7a2e00;margin:6px 0}
 .subtitle{text-align:center;font-size:14px;color:#555}
 .note{
-    text-align:center;
     background:#fff3cd;
     padding:10px;
-    border-radius:14px;
+    border-radius:12px;
     font-size:13px;
     margin:12px 0;
+    text-align:center;
 }
 
-/* الوجبات */
+/* ===== الوجبات ===== */
 .menu{display:flex;flex-direction:column;gap:14px}
-.item{
-    border:1px solid #ddd;
-    border-radius:18px;
-    overflow:hidden;
-    transition:.2s;
-}
-.item:active{transform:scale(.98)}
+.item{border:1px solid #ddd;border-radius:16px;overflow:hidden}
 .item img{width:100%;height:150px;object-fit:cover}
 .item-content{padding:12px}
-.item-title{font-weight:bold;margin-bottom:8px}
+.item-title{font-weight:bold;margin-bottom:6px}
+.price{font-size:14px;color:#666;margin-bottom:8px}
 
-/* العداد */
-.counter{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+/* عداد */
+.counter{display:flex;align-items:center;gap:10px}
 .counter button{
-    width:42px;
-    height:42px;
-    font-size:22px;
-    border:none;
-    border-radius:12px;
-    background:#eee;
-    transition:.15s;
+    width:38px;height:38px;font-size:20px;
+    border:none;border-radius:10px;background:#eee
 }
-.counter button:active{background:#ddd}
-.counter span{
-    min-width:40px;
-    text-align:center;
-    font-size:18px;
-    font-weight:bold;
-}
+.counter span{min-width:40px;text-align:center;font-weight:bold}
 
-/* الأقسام */
+/* ===== أقسام ===== */
 .section{
     margin-top:16px;
     padding:12px;
@@ -81,42 +58,45 @@ h1{text-align:center;color:#7a2e00;margin:6px 0}
     border-radius:16px;
     border:1px solid #ddd;
 }
+.section h3{margin:0 0 8px;font-size:16px}
 input{
     width:100%;
     padding:12px;
     font-size:16px;
-    border-radius:14px;
+    border-radius:12px;
     border:1px solid #ccc;
 }
 
-/* التوصيل */
-.delivery-options{display:flex;gap:10px}
-.delivery-card{
+/* عنوان فرنسي */
+.address input{
+    direction:ltr;
+    text-align:left;
+    font-family:Arial,sans-serif;
+}
+
+/* طريقة الاستلام */
+.delivery{display:flex;gap:10px}
+.delivery div{
     flex:1;
-    padding:14px;
+    padding:12px;
     text-align:center;
     border:2px solid #ddd;
-    border-radius:16px;
-    font-weight:bold;
-    transition:.2s;
+    border-radius:14px;
 }
-.delivery-card.active{
+.delivery .active{
     border-color:#25D366;
     background:#eafff1;
-    color:#1a7f45;
 }
 
 /* ملخص */
 .summary{
-    margin-top:14px;
+    background:#eef6ff;
     padding:12px;
-    background:#f1f8ff;
     border-radius:14px;
     font-size:14px;
-    display:none;
 }
 
-/* زر الطلب */
+/* زر */
 .order-btn{
     width:100%;
     margin-top:18px;
@@ -125,29 +105,17 @@ input{
     background:#25D366;
     color:#fff;
     border:none;
-    border-radius:18px;
-    transition:.2s;
-}
-.order-btn:disabled{
-    background:#a5d6b5;
-}
-.order-btn:active{transform:scale(.98)}
-
-.error{
-    margin-top:10px;
-    color:#b00020;
-    font-size:14px;
-    display:none;
+    border-radius:16px;
 }
 </style>
 </head>
 
 <body>
-
 <div class="container">
+
 <h1>🍽️ RIZ HADRAMI</h1>
 <div class="subtitle">طبخ حضرمي منزلي</div>
-<div class="note">⏳ الطلبات حتى نفاد الكمية</div>
+<div class="note">⏳ الطلبات حسب توفر الكمية</div>
 
 <div class="menu">
 
@@ -155,10 +123,11 @@ input{
 <img src="https://images.unsplash.com/photo-1600628422019-1f6c4e7a6f4a">
 <div class="item-content">
 <div class="item-title">صانه دجاج</div>
-<div class="counter" data-name="صانه دجاج">
-<button class="minus">−</button>
+<div class="price">€12</div>
+<div class="counter" data-name="صانه دجاج" data-price="12">
+<button onclick="qty(this,-1)">−</button>
 <span>0</span>
-<button class="plus">+</button>
+<button onclick="qty(this,1)">+</button>
 </div>
 </div>
 </div>
@@ -167,10 +136,11 @@ input{
 <img src="https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56">
 <div class="item-content">
 <div class="item-title">صانه لحم</div>
-<div class="counter" data-name="صانه لحم">
-<button class="minus">−</button>
+<div class="price">€15</div>
+<div class="counter" data-name="صانه لحم" data-price="15">
+<button onclick="qty(this,-1)">−</button>
 <span>0</span>
-<button class="plus">+</button>
+<button onclick="qty(this,1)">+</button>
 </div>
 </div>
 </div>
@@ -178,114 +148,90 @@ input{
 </div>
 
 <div class="section">
-<input id="name" placeholder="اسمك">
+<h3>👤 الاسم</h3>
+<input id="name" placeholder="Nom (optionnel)">
 </div>
 
 <div class="section">
-<div class="delivery-options">
-<div class="delivery-card" data-type="توصيل">🚚 توصيل</div>
-<div class="delivery-card" data-type="استلام">🏠 استلام</div>
+<h3>🚚 طريقة الاستلام</h3>
+<div class="delivery">
+<div onclick="setDelivery(this,'توصيل')">🚚 توصيل</div>
+<div onclick="setDelivery(this,'استلام')">🏠 استلام</div>
 </div>
 </div>
 
-<div class="section" id="addressBox" style="display:none">
-<input id="address" placeholder="عنوان التوصيل">
+<div class="section address" id="addressBox" style="display:none">
+<h3>📍 Adresse (en français)</h3>
+<input id="street" placeholder="Street & number">
+<input id="zip" placeholder="Postal code">
+<input id="city" placeholder="City">
 </div>
 
-<div class="summary" id="summary"></div>
-<div class="error" id="error"></div>
+<div class="section summary" id="summary">
+<h3>📋 ملخص الطلب</h3>
+<div id="summaryContent">لم يتم اختيار شيء بعد</div>
+</div>
 
-<button class="order-btn" id="sendBtn" disabled>
-📲 إرسال الطلب عبر واتساب
-</button>
+<button class="order-btn" onclick="send()">📲 إرسال الطلب عبر واتساب</button>
+
 </div>
 
 <script>
 let deliveryType="";
-const summary=document.getElementById("summary");
-const error=document.getElementById("error");
-const sendBtn=document.getElementById("sendBtn");
 
-document.getElementById("name").value=
-    localStorage.getItem("clientName")||"";
+function qty(btn,d){
+    let s=btn.parentElement.querySelector("span");
+    let v=Math.max(0,parseInt(s.textContent)+d);
+    s.textContent=v;
+    updateSummary();
+}
 
-function vibrate(){
-    if(navigator.vibrate) navigator.vibrate(20);
+function setDelivery(el,type){
+    deliveryType=type;
+    document.querySelectorAll(".delivery div").forEach(d=>d.classList.remove("active"));
+    el.classList.add("active");
+    document.getElementById("addressBox").style.display=type==="توصيل"?"block":"none";
+    updateSummary();
 }
 
 function updateSummary(){
-    let text="";
+    let html="", total=0;
     document.querySelectorAll(".counter").forEach(c=>{
         let q=parseInt(c.querySelector("span").textContent);
-        if(q>0) text+=`• ${c.dataset.name} × ${q}<br>`;
+        if(q>0){
+            let p=parseInt(c.dataset.price);
+            total+=q*p;
+            html+=`• ${c.dataset.name} × ${q}<br>`;
+        }
     });
-    if(text){
-        summary.innerHTML="<b>🧾 ملخص الطلب:</b><br>"+text;
-        summary.style.display="block";
-        sendBtn.disabled=false;
-    }else{
-        summary.style.display="none";
-        sendBtn.disabled=true;
+    if(!html){document.getElementById("summaryContent").innerHTML="—";return;}
+    html+=`<hr>طريقة الاستلام: ${deliveryType||"-"}<br>`;
+    if(deliveryType==="توصيل"){
+        html+=`العنوان: ${street.value}, ${zip.value} ${city.value}<br>`;
     }
+    html+=`<strong>المجموع: €${total}</strong>`;
+    document.getElementById("summaryContent").innerHTML=html;
 }
 
-document.querySelectorAll(".plus").forEach(b=>{
-    b.onclick=()=>{
-        vibrate();
-        let s=b.parentElement.querySelector("span");
-        s.textContent=parseInt(s.textContent)+1;
-        updateSummary();
-    }
-});
-document.querySelectorAll(".minus").forEach(b=>{
-    b.onclick=()=>{
-        vibrate();
-        let s=b.parentElement.querySelector("span");
-        let v=parseInt(s.textContent)-1;
-        s.textContent=v<0?0:v;
-        updateSummary();
-    }
-});
-
-document.querySelectorAll(".delivery-card").forEach(c=>{
-    c.onclick=()=>{
-        vibrate();
-        deliveryType=c.dataset.type;
-        document.querySelectorAll(".delivery-card").forEach(x=>x.classList.remove("active"));
-        c.classList.add("active");
-        document.getElementById("addressBox").style.display=
-            deliveryType==="توصيل"?"block":"none";
-    }
-});
-
-sendBtn.onclick=()=>{
-    error.style.display="none";
-    if(!deliveryType){
-        error.textContent="❗ اختر طريقة الاستلام";
-        error.style.display="block";
-        return;
-    }
-
-    localStorage.setItem("clientName",
-        document.getElementById("name").value);
-
-    let msg=`السلام عليكم 🌹\n`;
-    msg+=`الاسم: ${document.getElementById("name").value}\n\n`;
-    msg+=`الطلب:\n`;
+function send(){
+    let order="";
     document.querySelectorAll(".counter").forEach(c=>{
         let q=parseInt(c.querySelector("span").textContent);
-        if(q>0) msg+=`- ${c.dataset.name} × ${q}\n`;
+        if(q>0) order+=`- ${c.dataset.name} × ${q}\n`;
     });
-    msg+=`\nطريقة الاستلام: ${deliveryType}\n`;
-    if(deliveryType==="توصيل")
-        msg+=`العنوان: ${document.getElementById("address").value}\n`;
+    if(!order||!deliveryType){alert("أكمل الطلب");return;}
+
+    let msg=`السلام عليكم 🌹\n`;
+    msg+=`الاسم: ${name.value}\n\n`;
+    msg+=`الطلب:\n${order}\n`;
+    msg+=`طريقة الاستلام: ${deliveryType}\n`;
+    if(deliveryType==="توصيل"){
+        msg+=`العنوان: ${street.value}, ${zip.value} ${city.value}\n`;
+    }
     msg+="\nشكراً 🤍";
 
-    window.open(
-        "https://wa.me/33782549043?text="+encodeURIComponent(msg),
-        "_blank"
-    );
-};
+    location.assign("https://wa.me/33782549043?text="+encodeURIComponent(msg));
+}
 </script>
 
 </body>
