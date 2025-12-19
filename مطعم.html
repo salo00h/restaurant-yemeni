@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RIZ HADRAMI</title>
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+    margin:0;
+    padding:12px;
+    font-family:Tahoma,Arial,sans-serif;
+    direction:rtl;
+    background:#f4f4f4;
+}
+.container{
+    max-width:420px;
+    margin:auto;
+    background:#fff;
+    padding:14px;
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+h1{text-align:center;color:#7a2e00;margin:6px 0}
+.subtitle{text-align:center;font-size:14px;color:#555}
+.note{
+    text-align:center;
+    background:#fff3cd;
+    padding:10px;
+    border-radius:12px;
+    font-size:13px;
+    margin:12px 0;
+}
+.menu{display:flex;flex-direction:column;gap:14px}
+.item{border:1px solid #ddd;border-radius:16px;overflow:hidden}
+.item img{width:100%;height:150px;object-fit:cover}
+.item-content{padding:12px}
+.item-title{font-weight:bold;margin-bottom:8px}
+.counter{display:flex;align-items:center;gap:10px}
+.counter button{
+    width:40px;
+    height:40px;
+    font-size:22px;
+    border:none;
+    border-radius:10px;
+    background:#eee;
+}
+.counter span{min-width:40px;text-align:center;font-size:18px;font-weight:bold}
+.section{
+    margin-top:16px;
+    padding:12px;
+    background:#fafafa;
+    border-radius:16px;
+    border:1px solid #ddd;
+}
+input{
+    width:100%;
+    padding:12px;
+    font-size:16px;
+    border-radius:12px;
+    border:1px solid #ccc;
+}
+.delivery-options{display:flex;gap:10px}
+.delivery-card{
+    flex:1;
+    padding:12px;
+    text-align:center;
+    border:2px solid #ddd;
+    border-radius:14px;
+}
+.delivery-card.active{
+    border-color:#25D366;
+    background:#eafff1;
+}
+.order-btn{
+    width:100%;
+    margin-top:18px;
+    padding:16px;
+    font-size:18px;
+    background:#25D366;
+    color:#fff;
+    border:none;
+    border-radius:16px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>🍽️ RIZ HADRAMI</h1>
+<div class="subtitle">طبخ حضرمي منزلي</div>
+<div class="note">⏳ الطلبات حتى نفاد الكمية</div>
+
+<div class="menu">
+
+<div class="item">
+<img src="https://images.unsplash.com/photo-1600628422019-1f6c4e7a6f4a">
+<div class="item-content">
+<div class="item-title">صانه دجاج</div>
+<div class="counter" data-name="صانه دجاج">
+<button type="button" class="minus">−</button>
+<span>0</span>
+<button type="button" class="plus">+</button>
+</div>
+</div>
+</div>
+
+<div class="item">
+<img src="https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56">
+<div class="item-content">
+<div class="item-title">صانه لحم</div>
+<div class="counter" data-name="صانه لحم">
+<button type="button" class="minus">−</button>
+<span>0</span>
+<button type="button" class="plus">+</button>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="section">
+<input id="name" placeholder="اسمك">
+</div>
+
+<div class="section">
+<div class="delivery-options">
+<div class="delivery-card" data-type="توصيل">🚚 توصيل</div>
+<div class="delivery-card" data-type="استلام">🏠 استلام</div>
+</div>
+</div>
+
+<div class="section" id="addressBox" style="display:none">
+<input id="address" placeholder="عنوان التوصيل">
+</div>
+
+<button class="order-btn" id="sendBtn">📲 إرسال الطلب عبر واتساب</button>
+</div>
+
+<script>
+let deliveryType="";
+
+document.querySelectorAll(".plus").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        let span=btn.parentElement.querySelector("span");
+        span.textContent=parseInt(span.textContent)+1;
+    });
+});
+
+document.querySelectorAll(".minus").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        let span=btn.parentElement.querySelector("span");
+        let v=parseInt(span.textContent)-1;
+        span.textContent=v<0?0:v;
+    });
+});
+
+document.querySelectorAll(".delivery-card").forEach(card=>{
+    card.addEventListener("click",()=>{
+        deliveryType=card.dataset.type;
+        document.querySelectorAll(".delivery-card").forEach(c=>c.classList.remove("active"));
+        card.classList.add("active");
+        document.getElementById("addressBox").style.display =
+            deliveryType==="توصيل"?"block":"none";
+    });
+});
+
+document.getElementById("sendBtn").addEventListener("click",()=>{
+    let order="";
+    document.querySelectorAll(".counter").forEach(c=>{
+        let qty=parseInt(c.querySelector("span").textContent);
+        if(qty>0) order+=`- ${c.dataset.name} × ${qty}\n`;
+    });
+
+    if(!order){alert("اختر وجبة");return;}
+    if(!deliveryType){alert("اختر طريقة الاستلام");return;}
+
+    let msg=`السلام عليكم 🌹\n`;
+    msg+=`الاسم: ${document.getElementById("name").value}\n\n`;
+    msg+=`الطلب:\n${order}\n`;
+    msg+=`طريقة الاستلام: ${deliveryType}\n`;
+    if(deliveryType==="توصيل")
+        msg+=`العنوان: ${document.getElementById("address").value}\n`;
+    msg+="\nشكراً 🤍";
+
+    window.open(
+        "https://wa.me/33782549043?text="+encodeURIComponent(msg),
+        "_blank"
+    );
+});
+</script>
+
+</body>
+</html>
