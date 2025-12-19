@@ -89,6 +89,7 @@ input{
     text-align:center;
     border:2px solid #ddd;
     border-radius:14px;
+    cursor:pointer;
 }
 .delivery .active{
     border-color:#25D366;
@@ -103,24 +104,17 @@ input{
     font-size:14px;
 }
 
-/* Buttons */
-button{
-    width:100%;
-    margin-top:12px;
-    padding:14px;
-    font-size:16px;
-    border:none;
-    border-radius:14px;
-    cursor:pointer;
-}
-.maps-btn{
-    background:#4285F4;
-    color:#fff;
-}
+/* Button */
 .order-btn{
+    width:100%;
+    margin-top:18px;
+    padding:16px;
+    font-size:18px;
     background:#25D366;
     color:#fff;
-    font-size:18px;
+    border:none;
+    border-radius:16px;
+    cursor:pointer;
 }
 
 /* Desktop */
@@ -135,8 +129,15 @@ button{
 <div class="container">
 
 <h1>🍽️ RIZ HADRAMI</h1>
-<div class="subtitle">طبخ حضرمي منزلي<br><small> Cuisine yéménite maison</small></div>
-<div class="note">⏳ الطلبات حسب توفر الكمية<br><small>Commandes selon disponibilité</small></div>
+<div class="subtitle">
+طبخ حضرمي منزلي<br>
+<small>Cuisine yéménite maison</small>
+</div>
+
+<div class="note">
+⏳ الطلبات حسب توفر الكمية<br>
+<small>Commandes selon disponibilité</small>
+</div>
 
 <div class="menu">
 
@@ -178,8 +179,12 @@ button{
 <div class="section">
 <h3>🚚 طريقة الاستلام / Livraison</h3>
 <div class="delivery">
-<div onclick="setDelivery(this,'توصيل','Livraison')">🚚 توصيل<br><small>Livraison</small></div>
-<div onclick="setDelivery(this,'استلام','À emporter')">🏠 استلام<br><small>À emporter</small></div>
+<div onclick="setDelivery(this,'توصيل','Livraison')">
+🚚 توصيل<br><small>Livraison</small>
+</div>
+<div onclick="setDelivery(this,'استلام','À emporter')">
+🏠 استلام<br><small>À emporter</small>
+</div>
 </div>
 </div>
 
@@ -188,7 +193,6 @@ button{
 <input id="street" placeholder="Rue et numéro">
 <input id="zip" placeholder="Code postal">
 <input id="city" placeholder="Ville">
-<button class="maps-btn" onclick="openMaps()">📍 فتح في Google Maps</button>
 </div>
 
 <div class="section">
@@ -240,11 +244,6 @@ function update(){
     if(time.value) html+=`⏰ ${time.value}<br>`;
     html+=`<strong>Total: €${total}</strong>`;
     summary.innerHTML=html;
-}
-
-function openMaps(){
-    let q=`${street.value} ${zip.value} ${city.value}`;
-    window.open("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q));
 }
 
 function send(){
