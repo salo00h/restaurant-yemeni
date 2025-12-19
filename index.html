@@ -97,6 +97,14 @@ input,textarea{
 }
 .day-pick button.active{background:#25D366;color:#fff}
 
+/* Address inputs */
+.address-inputs {
+    margin-top: 10px;
+}
+.address-inputs input {
+    margin-bottom: 8px;
+}
+
 /* Summary */
 .summary{background:#eef6ff;padding:12px;border-radius:14px}
 
@@ -176,6 +184,11 @@ input,textarea{
 <div onclick="setDelivery(this,'Livraison')">🚚 Livraison</div>
 <div onclick="setDelivery(this,'À emporter')">🏠 À emporter</div>
 </div>
+<div class="address-inputs" id="addressBox" style="display:none">
+  <input id="street" placeholder="Rue et numéro">
+  <input id="zip" placeholder="Code postal">
+  <input id="city" placeholder="Ville">
+</div>
 </div>
 
 <div class="section">
@@ -216,8 +229,17 @@ function qty(btn,d){
 
 function setDelivery(el,mode){
  deliveryMode=mode;
+ 
  document.querySelectorAll(".delivery div").forEach(d=>d.classList.remove("active"));
  el.classList.add("active");
+ 
+ // ✅ إظهار / إخفاء العنوان
+ if(mode === "Livraison"){
+   addressBox.style.display = "block";
+ }else{
+   addressBox.style.display = "none";
+ }
+ 
  update();
 }
 
@@ -227,7 +249,8 @@ function setDay(type){
  btnSpecific.classList.remove("active");
  if(type==="today"){
   btnToday.classList.add("active");
-  orderDate.style.display="none"; orderDate.value="";
+  orderDate.style.display="none"; 
+  orderDate.value="";
  }else{
   btnSpecific.classList.add("active");
   orderDate.style.display="block";
@@ -237,16 +260,60 @@ function setDay(type){
 
 function update(){
  let html="", total=0;
+ 
+ // حساب المنتجات والسعر
  document.querySelectorAll(".counter").forEach(c=>{
   let q=parseInt(c.querySelector("span").textContent);
-  if(q){total+=q*c.dataset.price;html+=`• ${c.dataset.fr} × ${q}<br>`;}
+  if(q>0){
+    total+=q*parseInt(c.dataset.price);
+    html+=`• ${c.dataset.fr} × ${q}<br>`;
+  }
  });
+ 
+ // تحديث الشريط السفلي
  totalBar.innerHTML=`💰 Total : €${total}`;
- if(!html){summary.innerHTML="—";return;}
- html+=`<hr>Mode : ${deliveryMode}<br>`;
- html+= orderDayType==="today" ? "📅 Aujourd’hui<br>" : `📅 ${orderDate.value}<br>`;
- if(time.value) html+=`⏰ ${time.value}<br>`;
- if(customerNote.value) html+=`📝 ${customerNote.value}<br>`;
+ 
+ // إذا لم تكن هناك منتجات
+ if(!html){
+  summary.innerHTML="—";
+  return;
+ }
+ 
+ html+=`<hr>`;
+ 
+ // طريقة التوصيل
+ html+=`Mode : ${deliveryMode || "-"}<br>`;
+ 
+ // العنوان (إذا كان توصيل)
+ if(deliveryMode === "Livraison"){
+   let addressText = "";
+   if(street.value) addressText += street.value + " ";
+   if(zip.value) addressText += zip.value + " ";
+   if(city.value) addressText += city.value;
+   
+   if(addressText.trim()){
+     html+=`📍 Adresse : ${addressText.trim()}<br>`;
+   }
+ }
+ 
+ // التاريخ
+ if(orderDayType === "today"){
+   html+=`📅 Aujourd’hui<br>`;
+ }else if(orderDayType === "specific" && orderDate.value){
+   html+=`📅 ${orderDate.value}<br>`;
+ }
+ 
+ // الوقت
+ if(time.value){
+   html+=`⏰ ${time.value}<br>`;
+ }
+ 
+ // الملاحظة
+ if(customerNote.value.trim()){
+   html+=`📝 ${customerNote.value.trim()}<br>`;
+ }
+ 
+ // المجموع
  html+=`<strong>Total : €${total}</strong>`;
  summary.innerHTML=html;
 }
@@ -257,10 +324,87 @@ function confirmSend(){
 
 function send(){
  let msg="Bonjour 🌿\n\n";
- if(customerName.value) msg+=`Nom : ${customerName.value}\n\n`;
- msg+="Commande :\n"+summary.innerText+"\n\nMerci 🤍";
+ 
+ // الاسم
+ if(customerName.value.trim()){
+   msg+=`Nom : ${customerName.value.trim()}\n\n`;
+ }
+ 
+ // المنتجات
+ let hasProducts=false;
+ document.querySelectorAll(".counter").forEach(c=>{
+  let q=parseInt(c.querySelector("span").textContent);
+  if(q>0){
+    hasProducts=true;
+    msg+=`- ${c.dataset.fr} × ${q}\n`;
+  }
+ });
+ 
+ if(!hasProducts){
+   alert("Veuillez ajouter au moins un produit.");
+   return;
+ }
+ 
+ msg+="\n";
+ 
+ // طريقة التوصيل
+ msg+=`Mode : ${deliveryMode || "-"}\n`;
+ 
+ // العنوان (إذا كان توصيل)
+ if(deliveryMode === "Livraison"){
+   let addressText = "";
+   if(street.value) addressText += street.value + " ";
+   if(zip.value) addressText += zip.value + " ";
+   if(city.value) addressText += city.value;
+   
+   if(addressText.trim()){
+     msg+=`Adresse : ${addressText.trim()}\n`;
+   }
+ }
+ 
+ // التاريخ
+ if(orderDayType === "today"){
+   msg+=`Jour : Aujourd’hui\n`;
+ }else if(orderDayType === "specific" && orderDate.value){
+   msg+=`Jour : ${orderDate.value}\n`;
+ }
+ 
+ // الوقت
+ if(time.value){
+   msg+=`Heure : ${time.value}\n`;
+ }
+ 
+ // الملاحظة
+ if(customerNote.value.trim()){
+   msg+=`Note : ${customerNote.value.trim()}\n`;
+ }
+ 
+ // حساب المجموع
+ let total=0;
+ document.querySelectorAll(".counter").forEach(c=>{
+  let q=parseInt(c.querySelector("span").textContent);
+  if(q>0){
+    total+=q*parseInt(c.dataset.price);
+  }
+ });
+ 
+ msg+=`\nTotal : €${total}\n\nMerci 🤍`;
+ 
+ // إرسال إلى واتساب
  location.href="https://wa.me/33782549043?text="+encodeURIComponent(msg);
 }
+
+// تحديث عند تغيير أي حقل
+customerName.addEventListener('input', update);
+street.addEventListener('input', update);
+zip.addEventListener('input', update);
+city.addEventListener('input', update);
+orderDate.addEventListener('input', update);
+time.addEventListener('input', update);
+customerNote.addEventListener('input', update);
+
+// تعيين التاريخ الافتراضي لحقل التاريخ
+orderDate.min = new Date().toISOString().split("T")[0];
 </script>
 
 </body>
