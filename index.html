@@ -14,6 +14,7 @@ body{
     font-family:Tahoma,Arial,sans-serif;
     direction:rtl;
     background:#f4f4f4;
+    padding-bottom:78px; /* مساحة لشريط المجموع */
 }
 .container{
     max-width:420px;
@@ -32,6 +33,36 @@ h1{text-align:center;color:#7a2e00;margin:6px 0}
     font-size:13px;
     margin:12px 0;
     text-align:center;
+}
+
+/* ✅ Chef */
+.chef{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#f9f9f9;
+    padding:10px;
+    border-radius:14px;
+    border:1px solid #eee;
+    margin:12px 0;
+}
+.chef img{
+    width:56px;height:56px;
+    border-radius:50%;
+    object-fit:cover;
+    flex-shrink:0;
+}
+.chef .text{font-size:13px;color:#444;line-height:1.4}
+
+/* ✅ Working hours */
+.hours{
+    background:#eef6ff;
+    padding:10px;
+    border-radius:12px;
+    font-size:13px;
+    margin:12px 0;
+    text-align:center;
+    border:1px solid #d7e8ff;
 }
 
 /* ===== MENU ===== */
@@ -65,7 +96,7 @@ h1{text-align:center;color:#7a2e00;margin:6px 0}
 .section small{color:#666}
 
 /* Inputs */
-input{
+input, textarea{
     width:100%;
     padding:12px;
     font-size:16px;
@@ -96,6 +127,22 @@ input{
     background:#eafff1;
 }
 
+/* ✅ Day buttons */
+.day-pick{display:flex;gap:10px;margin-top:8px}
+.day-pick button{
+    flex:1;
+    padding:12px;
+    border:none;
+    border-radius:14px;
+    background:#eee;
+    font-size:14px;
+    cursor:pointer;
+}
+.day-pick button.active{
+    background:#25D366;
+    color:#fff;
+}
+
 /* Summary */
 .summary{
     background:#eef6ff;
@@ -117,6 +164,19 @@ input{
     cursor:pointer;
 }
 
+/* ✅ Total bar fixed */
+.total-bar{
+    position:fixed;
+    left:0; right:0; bottom:0;
+    background:#25D366;
+    color:#fff;
+    padding:14px 12px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+    box-shadow:0 -10px 30px rgba(0,0,0,.12);
+}
+
 /* Desktop */
 @media(min-width:768px){
     .container{max-width:720px}
@@ -134,6 +194,23 @@ input{
 <small>Cuisine yéménite maison</small>
 </div>
 
+<!-- ✅ Chef section -->
+<div class="chef">
+  <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=200&q=80" alt="Chef">
+  <div class="text">
+    <strong>👨‍🍳 طبخ منزلي – جودة عائلية</strong><br>
+    <small>👨‍🍳 Fait maison – Qualité familiale</small>
+  </div>
+</div>
+
+<!-- ✅ Working hours -->
+<div class="hours">
+  ⏰ الطلبات: 10:00 – 18:00<br>
+  <small>⏰ Commandes : 10:00 – 18:00</small><br>
+  🚫 خارج الوقت لا يتم الرد<br>
+  <small>🚫 Hors horaires : pas de réponse</small>
+</div>
+
 <div class="note">
 ⏳ الطلبات حسب توفر الكمية<br>
 <small>Commandes selon disponibilité</small>
@@ -144,10 +221,10 @@ input{
 <div class="item">
 <img src="https://images.unsplash.com/photo-1600628422019-1f6c4e7a6f4a">
 <div class="item-content">
-<div class="item-title">صانه دجاج</div>
+<div class="item-title">🍗 صانه دجاج</div>
 <div class="item-fr">Plateau de poulet</div>
 <div class="price">€12</div>
-<div class="counter" data-ar="صانه دجاج" data-fr="Plateau de poulet" data-price="12">
+<div class="counter" data-ar="🍗 صانه دجاج" data-fr="Plateau de poulet" data-price="12">
 <button onclick="qty(this,-1)">−</button>
 <span>0</span>
 <button onclick="qty(this,1)">+</button>
@@ -158,10 +235,10 @@ input{
 <div class="item">
 <img src="https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56">
 <div class="item-content">
-<div class="item-title">صانه لحم</div>
+<div class="item-title">🥩 صانه لحم</div>
 <div class="item-fr">Plateau de viande</div>
 <div class="price">€15</div>
-<div class="counter" data-ar="صانه لحم" data-fr="Plateau de viande" data-price="15">
+<div class="counter" data-ar="🥩 صانه لحم" data-fr="Plateau de viande" data-price="15">
 <button onclick="qty(this,-1)">−</button>
 <span>0</span>
 <button onclick="qty(this,1)">+</button>
@@ -195,9 +272,28 @@ input{
 <input id="city" placeholder="Ville">
 </div>
 
+<!-- ✅ Day selection + optional date -->
+<div class="section">
+  <h3>📅 يوم الطلب / Jour</h3>
+  <small>اختر اليوم أو غدًا، أو ضع تاريخًا (اختياري) / Choisissez aujourd’hui, demain ou une date (optionnel)</small>
+
+  <div class="day-pick">
+    <button type="button" id="btnToday" onclick="setDay('today')">📅 اليوم<br><small>Aujourd’hui</small></button>
+    <button type="button" id="btnTomorrow" onclick="setDay('tomorrow')">📅 غدًا<br><small>Demain</small></button>
+  </div>
+
+  <input type="date" id="orderDate" onchange="update()">
+</div>
+
 <div class="section">
 <h3>⏰ وقت الاستلام / Heure</h3>
 <input type="time" id="time">
+</div>
+
+<!-- ✅ Customer note -->
+<div class="section">
+  <h3>📝 ملاحظة للزبون / Note</h3>
+  <textarea id="customerNote" rows="3" placeholder="مثال: بدون حار / Sans piment"></textarea>
 </div>
 
 <div class="section summary">
@@ -205,12 +301,20 @@ input{
 <div id="summary">—</div>
 </div>
 
-<button class="order-btn" onclick="send()">📲 إرسال الطلب عبر واتساب</button>
+<!-- ✅ confirmation before WhatsApp -->
+<button class="order-btn" onclick="confirmSend()">📲 إرسال الطلب عبر واتساب<br><small>Envoyer sur WhatsApp</small></button>
 
 </div>
 
+<!-- ✅ total bar -->
+<div class="total-bar" id="totalBar">💰 المجموع / Total: €0</div>
+
 <script>
 let deliveryAR="", deliveryFR="";
+let dayAR="", dayFR=""; // ✅ يوم الطلب
+
+// ✅ اجعل اليوم افتراضيًا
+setDay('today');
 
 function qty(btn,d){
     let s=btn.parentElement.querySelector("span");
@@ -226,8 +330,26 @@ function setDelivery(el,ar,fr){
     update();
 }
 
+// ✅ day function
+function setDay(which){
+    const t=document.getElementById("btnToday");
+    const tm=document.getElementById("btnTomorrow");
+    t.classList.remove("active");
+    tm.classList.remove("active");
+
+    if(which==="today"){
+        dayAR="اليوم"; dayFR="Aujourd’hui";
+        t.classList.add("active");
+    }else{
+        dayAR="غدًا"; dayFR="Demain";
+        tm.classList.add("active");
+    }
+    update();
+}
+
 function update(){
     let html="", total=0;
+
     document.querySelectorAll(".counter").forEach(c=>{
         let q=parseInt(c.querySelector("span").textContent);
         if(q>0){
@@ -236,25 +358,57 @@ function update(){
             html+=`• ${c.dataset.ar} (${c.dataset.fr}) × ${q}<br>`;
         }
     });
-    if(!html){summary.innerHTML="—";return;}
-    html+=`<hr>🚚 ${deliveryAR||"-"} / ${deliveryFR||"-"}<br>`;
-    if(deliveryAR==="توصيل"){
-        html+=`📍 ${street.value}, ${zip.value} ${city.value}<br>`;
+
+    // ✅ شريط المجموع دائمًا
+    totalBar.innerHTML = `💰 المجموع / Total: €${total}`;
+
+    if(!html){
+        summary.innerHTML="—";
+        return;
     }
+
+    html+=`<hr>🚚 ${deliveryAR||"-"} / ${deliveryFR||"-"}<br>`;
+
+    if(deliveryAR==="توصيل"){
+        html+=`📍 ${street.value||""}, ${zip.value||""} ${city.value||""}<br>`;
+    }
+
+    // ✅ يوم الطلب + تاريخ اختياري
+    const d = document.getElementById("orderDate").value;
+    if(d){
+        html+=`📅 ${d} <small>(Date)</small><br>`;
+    }else{
+        html+=`📅 ${dayAR||"-"} / ${dayFR||"-"}<br>`;
+    }
+
     if(time.value) html+=`⏰ ${time.value}<br>`;
+
+    // ✅ ملاحظة
+    const note = document.getElementById("customerNote").value.trim();
+    if(note){
+        html+=`📝 ${note}<br>`;
+    }
+
     html+=`<strong>Total: €${total}</strong>`;
     summary.innerHTML=html;
 }
 
+// ✅ Popup confirmation
+function confirmSend(){
+    const ok = confirm("✅ هل تريد إرسال الطلب الآن عبر واتساب؟\n\n✅ Voulez-vous envoyer la commande maintenant sur WhatsApp ?");
+    if(ok) send();
+}
+
 function send(){
     let msg="السلام عليكم 🌹\n";
+    msg+="Bonjour 🌹\n\n";
 
     const customerName = document.getElementById("customerName").value.trim();
     if(customerName){
-        msg+=`الاسم: ${customerName}\n\n`;
+        msg+=`الاسم / Nom: ${customerName}\n\n`;
     }
 
-    msg+="الطلب:\n";
+    msg+="الطلب / Commande:\n";
     document.querySelectorAll(".counter").forEach(c=>{
         let q=parseInt(c.querySelector("span").textContent);
         if(q>0){
@@ -262,17 +416,39 @@ function send(){
         }
     });
 
-    msg+=`\nطريقة الاستلام: ${deliveryAR}\n`;
+    msg+=`\nطريقة الاستلام / Mode: ${deliveryAR||"-"} / ${deliveryFR||"-"}\n`;
 
     if(deliveryAR==="توصيل"){
-        msg+=`العنوان: ${street.value}, ${zip.value} ${city.value}\n`;
+        msg+=`العنوان / Adresse: ${street.value}, ${zip.value} ${city.value}\n`;
+    }
+
+    // ✅ يوم الطلب + تاريخ
+    const d = document.getElementById("orderDate").value;
+    if(d){
+        msg+=`يوم الطلب / Date: ${d}\n`;
+    }else{
+        msg+=`يوم الطلب / Jour: ${dayAR} / ${dayFR}\n`;
     }
 
     if(time.value){
-        msg+=`وقت الاستلام: ${time.value}\n`;
+        msg+=`وقت الاستلام / Heure: ${time.value}\n`;
     }
 
-    msg+="\nشكراً 🤍";
+    // ✅ ملاحظة
+    const note = document.getElementById("customerNote").value.trim();
+    if(note){
+        msg+=`ملاحظة / Note: ${note}\n`;
+    }
+
+    // ✅ المجموع
+    let total=0;
+    document.querySelectorAll(".counter").forEach(c=>{
+        let q=parseInt(c.querySelector("span").textContent);
+        if(q>0) total += q*parseInt(c.dataset.price);
+    });
+    msg+=`\nالمجموع / Total: €${total}\n`;
+
+    msg+="\nشكراً 🤍\nMerci 🤍";
 
     location.assign(
         "https://wa.me/33782549043?text="+encodeURIComponent(msg)
