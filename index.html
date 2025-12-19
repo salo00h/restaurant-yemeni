@@ -173,7 +173,7 @@ input{
 
 <div class="section">
 <h3>👤 الاسم / Nom</h3>
-<input id="name" placeholder="Nom (optionnel)">
+<input id="customerName" placeholder="Nom (optionnel)">
 </div>
 
 <div class="section">
@@ -249,7 +249,7 @@ function update(){
 function send(){
     let msg="السلام عليكم 🌹\n";
 
-    const customerName = document.getElementById("name").value.trim();
+    const customerName = document.getElementById("customerName").value.trim();
     if(customerName){
         msg+=`الاسم: ${customerName}\n\n`;
     }
@@ -258,7 +258,7 @@ function send(){
     document.querySelectorAll(".counter").forEach(c=>{
         let q=parseInt(c.querySelector("span").textContent);
         if(q>0){
-            msg+=`* ${c.dataset.ar} (${c.dataset.fr}) × ${q}\n`;
+            msg+=`- ${c.dataset.ar} (${c.dataset.fr}) × ${q}\n`;
         }
     });
 
@@ -278,7 +278,6 @@ function send(){
         "https://wa.me/33782549043?text="+encodeURIComponent(msg)
     );
 }
-
 </script>
 
 </body>
