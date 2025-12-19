@@ -40,10 +40,11 @@ h1{text-align:center;color:#7a2e00;margin:6px 0}
 .item img{width:100%;height:150px;object-fit:cover}
 .item-content{padding:12px}
 .item-title{font-weight:bold}
-.price{font-size:14px;color:#666;margin:4px 0}
+.item-fr{font-size:13px;color:#666;margin-bottom:6px}
+.price{font-size:14px;color:#444;margin-bottom:6px}
 
 /* Counter */
-.counter{display:flex;align-items:center;gap:10px;margin-top:8px}
+.counter{display:flex;align-items:center;gap:10px}
 .counter button{
     width:36px;height:36px;
     font-size:20px;
@@ -60,13 +61,17 @@ h1{text-align:center;color:#7a2e00;margin:6px 0}
     border-radius:16px;
     border:1px solid #ddd;
 }
-.section h3{margin:0 0 8px;font-size:16px}
+.section h3{margin:0 0 6px;font-size:16px}
+.section small{color:#666}
+
+/* Inputs */
 input{
     width:100%;
     padding:12px;
     font-size:16px;
     border-radius:12px;
     border:1px solid #ccc;
+    margin-top:6px;
 }
 
 /* Address FR */
@@ -98,19 +103,25 @@ input{
     font-size:14px;
 }
 
-/* Button */
-.order-btn{
+/* Buttons */
+button{
     width:100%;
-    margin-top:18px;
-    padding:16px;
-    font-size:18px;
+    margin-top:12px;
+    padding:14px;
+    font-size:16px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+}
+.maps-btn{
+    background:#4285F4;
+    color:#fff;
+}
+.order-btn{
     background:#25D366;
     color:#fff;
-    border:none;
-    border-radius:16px;
-    opacity:.6;
+    font-size:18px;
 }
-.order-btn.active{opacity:1}
 
 /* Desktop */
 @media(min-width:768px){
@@ -124,8 +135,8 @@ input{
 <div class="container">
 
 <h1>🍽️ RIZ HADRAMI</h1>
-<div class="subtitle">طبخ حضرمي منزلي</div>
-<div class="note">⏳ الطلبات حسب توفر الكمية</div>
+<div class="subtitle">طبخ حضرمي منزلي<br><small> Cuisine yéménite maison</small></div>
+<div class="note">⏳ الطلبات حسب توفر الكمية<br><small>Commandes selon disponibilité</small></div>
 
 <div class="menu">
 
@@ -133,8 +144,9 @@ input{
 <img src="https://images.unsplash.com/photo-1600628422019-1f6c4e7a6f4a">
 <div class="item-content">
 <div class="item-title">صانه دجاج</div>
+<div class="item-fr">Plateau de poulet</div>
 <div class="price">€12</div>
-<div class="counter" data-name="صانه دجاج" data-price="12">
+<div class="counter" data-ar="صانه دجاج" data-fr="Plateau de poulet" data-price="12">
 <button onclick="qty(this,-1)">−</button>
 <span>0</span>
 <button onclick="qty(this,1)">+</button>
@@ -146,8 +158,9 @@ input{
 <img src="https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56">
 <div class="item-content">
 <div class="item-title">صانه لحم</div>
+<div class="item-fr">Plateau de viande</div>
 <div class="price">€15</div>
-<div class="counter" data-name="صانه لحم" data-price="15">
+<div class="counter" data-ar="صانه لحم" data-fr="Plateau de viande" data-price="15">
 <button onclick="qty(this,-1)">−</button>
 <span>0</span>
 <button onclick="qty(this,1)">+</button>
@@ -158,86 +171,95 @@ input{
 </div>
 
 <div class="section">
-<h3>👤 الاسم</h3>
+<h3>👤 الاسم / Nom</h3>
 <input id="name" placeholder="Nom (optionnel)">
 </div>
 
 <div class="section">
-<h3>🚚 طريقة الاستلام</h3>
+<h3>🚚 طريقة الاستلام / Livraison</h3>
 <div class="delivery">
-<div onclick="setDelivery(this,'توصيل')">🚚 توصيل</div>
-<div onclick="setDelivery(this,'استلام')">🏠 استلام</div>
+<div onclick="setDelivery(this,'توصيل','Livraison')">🚚 توصيل<br><small>Livraison</small></div>
+<div onclick="setDelivery(this,'استلام','À emporter')">🏠 استلام<br><small>À emporter</small></div>
 </div>
 </div>
 
 <div class="section address" id="addressBox" style="display:none">
-<h3>📍 Adresse (FR)</h3>
+<h3>📍 العنوان / Adresse</h3>
 <input id="street" placeholder="Rue et numéro">
 <input id="zip" placeholder="Code postal">
 <input id="city" placeholder="Ville">
+<button class="maps-btn" onclick="openMaps()">📍 فتح في Google Maps</button>
+</div>
+
+<div class="section">
+<h3>⏰ وقت الاستلام / Heure</h3>
+<input type="time" id="time">
 </div>
 
 <div class="section summary">
-<h3>📋 ملخص الطلب</h3>
+<h3>📋 ملخص الطلب / Récapitulatif</h3>
 <div id="summary">—</div>
 </div>
 
-<button id="sendBtn" class="order-btn" onclick="send()">📲 إرسال الطلب عبر واتساب</button>
+<button class="order-btn" onclick="send()">📲 إرسال الطلب عبر واتساب</button>
 
 </div>
 
 <script>
-let deliveryType="";
+let deliveryAR="", deliveryFR="";
 
 function qty(btn,d){
     let s=btn.parentElement.querySelector("span");
-    let v=Math.max(0,Math.min(20,parseInt(s.textContent)+d));
-    s.textContent=v;
+    s.textContent=Math.max(0,Math.min(20,parseInt(s.textContent)+d));
     update();
 }
 
-function setDelivery(el,type){
-    deliveryType=type;
+function setDelivery(el,ar,fr){
+    deliveryAR=ar; deliveryFR=fr;
     document.querySelectorAll(".delivery div").forEach(d=>d.classList.remove("active"));
     el.classList.add("active");
-    addressBox.style.display=type==="توصيل"?"block":"none";
+    addressBox.style.display=ar==="توصيل"?"block":"none";
     update();
 }
 
 function update(){
-    let html="", total=0, has=false;
+    let html="", total=0;
     document.querySelectorAll(".counter").forEach(c=>{
         let q=parseInt(c.querySelector("span").textContent);
         if(q>0){
-            has=true;
             let p=parseInt(c.dataset.price);
             total+=q*p;
-            html+=`• ${c.dataset.name} × ${q} (${p}€)<br>`;
+            html+=`• ${c.dataset.ar} (${c.dataset.fr}) × ${q}<br>`;
         }
     });
-    if(!has){summary.innerHTML="—";sendBtn.classList.remove("active");return;}
-    html+=`<hr>طريقة الاستلام: ${deliveryType||"-"}<br>`;
-    if(deliveryType==="توصيل"){
-        html+=`العنوان: ${street.value}, ${zip.value} ${city.value}<br>`;
+    if(!html){summary.innerHTML="—";return;}
+    html+=`<hr>🚚 ${deliveryAR||"-"} / ${deliveryFR||"-"}<br>`;
+    if(deliveryAR==="توصيل"){
+        html+=`📍 ${street.value}, ${zip.value} ${city.value}<br>`;
     }
-    html+=`<strong>TOTAL: €${total}</strong>`;
+    if(time.value) html+=`⏰ ${time.value}<br>`;
+    html+=`<strong>Total: €${total}</strong>`;
     summary.innerHTML=html;
-    sendBtn.classList.add("active");
+}
+
+function openMaps(){
+    let q=`${street.value} ${zip.value} ${city.value}`;
+    window.open("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q));
 }
 
 function send(){
-    if(!sendBtn.classList.contains("active")) return;
-    let msg=`السلام عليكم 🌹\n`;
+    let msg="السلام عليكم 🌹\n";
     msg+=`الاسم: ${name.value}\n\n`;
     msg+="الطلب:\n";
     document.querySelectorAll(".counter").forEach(c=>{
         let q=parseInt(c.querySelector("span").textContent);
-        if(q>0) msg+=`- ${c.dataset.name} × ${q}\n`;
+        if(q>0) msg+=`- ${c.dataset.ar} (${c.dataset.fr}) × ${q}\n`;
     });
-    msg+=`\nطريقة الاستلام: ${deliveryType}\n`;
-    if(deliveryType==="توصيل"){
+    msg+=`\nطريقة الاستلام: ${deliveryAR}\n`;
+    if(deliveryAR==="توصيل"){
         msg+=`العنوان: ${street.value}, ${zip.value} ${city.value}\n`;
     }
+    if(time.value) msg+=`وقت الاستلام: ${time.value}\n`;
     msg+="\nشكراً 🤍";
     location.assign("https://wa.me/33782549043?text="+encodeURIComponent(msg));
 }
