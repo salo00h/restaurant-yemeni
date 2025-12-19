@@ -337,9 +337,15 @@ function update(){
 function confirmSend(){
  if(confirm("Envoyer la commande sur WhatsApp ?")) send();
 }
+function isMobile(){
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
 
 function send(){
- let msg="Bonjour 🌿\n\n";
+ let msg = isMobile()
+  ? "Bonjour 🌿\n\n"
+  : "Bonjour\n\n";
+
  msg+="Je souhaite passer une commande chez RIZ HADRAMI.\n\n";
  
  // الاسم
