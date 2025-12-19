@@ -248,20 +248,37 @@ function update(){
 
 function send(){
     let msg="السلام عليكم 🌹\n";
-    msg+=`الاسم: ${name.value}\n\n`;
+
+    const customerName = document.getElementById("name").value.trim();
+    if(customerName){
+        msg+=`الاسم: ${customerName}\n\n`;
+    }
+
     msg+="الطلب:\n";
     document.querySelectorAll(".counter").forEach(c=>{
         let q=parseInt(c.querySelector("span").textContent);
-        if(q>0) msg+=`- ${c.dataset.ar} (${c.dataset.fr}) × ${q}\n`;
+        if(q>0){
+            msg+=`* ${c.dataset.ar} (${c.dataset.fr}) × ${q}\n`;
+        }
     });
+
     msg+=`\nطريقة الاستلام: ${deliveryAR}\n`;
+
     if(deliveryAR==="توصيل"){
         msg+=`العنوان: ${street.value}, ${zip.value} ${city.value}\n`;
     }
-    if(time.value) msg+=`وقت الاستلام: ${time.value}\n`;
+
+    if(time.value){
+        msg+=`وقت الاستلام: ${time.value}\n`;
+    }
+
     msg+="\nشكراً 🤍";
-    location.assign("https://wa.me/33782549043?text="+encodeURIComponent(msg));
+
+    location.assign(
+        "https://wa.me/33782549043?text="+encodeURIComponent(msg)
+    );
 }
+
 </script>
 
 </body>
