@@ -340,14 +340,16 @@ function confirmSend(){
 
 function send(){
  let msg="Bonjour 🌿\n\n";
+ msg+="Je souhaite passer une commande chez RIZ HADRAMI.\n\n";
  
  // الاسم
  if(customerName.value.trim()){
-   msg+=`Nom : ${customerName.value.trim()}\n\n`;
+   msg+=`👤 Nom : ${customerName.value.trim()}\n\n`;
  }
  
- // المنتجات
+ // الطلب
  let hasProducts=false;
+ msg+="🍽️ Commande :\n";
  document.querySelectorAll(".counter").forEach(c=>{
   let q=parseInt(c.querySelector("span").textContent);
   if(q>0){
@@ -363,10 +365,9 @@ function send(){
  
  msg+="\n";
  
- // طريقة التوصيل
- msg+=`Mode : ${deliveryMode || "-"}\n`;
+ // التوصيل
+ msg+=`🚚 Mode : ${deliveryMode || "-"}\n`;
  
- // العنوان (إذا كان توصيل)
  if(deliveryMode === "Livraison"){
    let addressText = "";
    if(street.value) addressText += street.value + " ";
@@ -374,28 +375,31 @@ function send(){
    if(city.value) addressText += city.value;
    
    if(addressText.trim()){
-     msg+=`Adresse : ${addressText.trim()}\n`;
+     msg+=`📍 Adresse : ${addressText.trim()}\n`;
    }
  }
  
- // التاريخ
+ // اليوم
  if(orderDayType === "today"){
-   msg+=`Jour : Aujourd’hui\n`;
+   msg+=`📅 Jour : Aujourd’hui\n`;
  }else if(orderDayType === "specific" && orderDate.value){
-   msg+=`Jour : ${orderDate.value}\n`;
+   msg+=`📅 Jour : ${orderDate.value}\n`;
  }
  
  // الوقت
  if(time.value){
-   msg+=`Heure : ${time.value}\n`;
+   msg+=`⏰ Heure souhaitée : ${time.value}\n`;
  }
  
  // الملاحظة
  if(customerNote.value.trim()){
-   msg+=`Note : ${customerNote.value.trim()}\n`;
+   msg+=`\n📝 Remarque :\n${customerNote.value.trim()}\n`;
  }
  
- // حساب المجموع
+ // ملاحظة التحضير (بأسلوب عميل)
+ msg+=`\n⏳ J’ai bien noté que le temps de préparation est d’environ 3 heures.\n`;
+ 
+ // المجموع
  let total=0;
  document.querySelectorAll(".counter").forEach(c=>{
   let q=parseInt(c.querySelector("span").textContent);
@@ -404,11 +408,12 @@ function send(){
   }
  });
  
- msg+=`\nTotal : €${total}\n\nMerci 🤍`;
+ msg+=`\n💰 Total estimé : €${total}\n\nMerci beaucoup 🤍`;
  
- // إرسال إلى واتساب
+ // واتساب
  location.href="https://wa.me/33782549043?text="+encodeURIComponent(msg);
 }
+
 
 // تحديث عند تغيير أي حقل
 customerName.addEventListener('input', update);
