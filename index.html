@@ -7,7 +7,10 @@
 <title>RIZ HADRAMI</title>
 
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
 body{
     margin:0;
     padding:12px;
@@ -20,8 +23,8 @@ body{
     margin:auto;
     background:#fff;
     padding:14px;
-    border-radius:18px;
-    box-shadow:0 10px 30px rgba(0,0,0,.12);
+    border-radius:20px;
+    box-shadow:0 12px 35px rgba(0,0,0,.12);
 }
 h1{text-align:center;color:#7a2e00;margin:6px 0}
 .subtitle{text-align:center;font-size:14px;color:#555}
@@ -29,25 +32,48 @@ h1{text-align:center;color:#7a2e00;margin:6px 0}
     text-align:center;
     background:#fff3cd;
     padding:10px;
-    border-radius:12px;
+    border-radius:14px;
     font-size:13px;
     margin:12px 0;
 }
+
+/* الوجبات */
 .menu{display:flex;flex-direction:column;gap:14px}
-.item{border:1px solid #ddd;border-radius:16px;overflow:hidden}
+.item{
+    border:1px solid #ddd;
+    border-radius:18px;
+    overflow:hidden;
+    transition:.2s;
+}
+.item:active{transform:scale(.98)}
 .item img{width:100%;height:150px;object-fit:cover}
 .item-content{padding:12px}
 .item-title{font-weight:bold;margin-bottom:8px}
-.counter{display:flex;align-items:center;gap:10px}
+
+/* العداد */
+.counter{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
 .counter button{
-    width:40px;
-    height:40px;
+    width:42px;
+    height:42px;
     font-size:22px;
     border:none;
-    border-radius:10px;
+    border-radius:12px;
     background:#eee;
+    transition:.15s;
 }
-.counter span{min-width:40px;text-align:center;font-size:18px;font-weight:bold}
+.counter button:active{background:#ddd}
+.counter span{
+    min-width:40px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+}
+
+/* الأقسام */
 .section{
     margin-top:16px;
     padding:12px;
@@ -59,21 +85,38 @@ input{
     width:100%;
     padding:12px;
     font-size:16px;
-    border-radius:12px;
+    border-radius:14px;
     border:1px solid #ccc;
 }
+
+/* التوصيل */
 .delivery-options{display:flex;gap:10px}
 .delivery-card{
     flex:1;
-    padding:12px;
+    padding:14px;
     text-align:center;
     border:2px solid #ddd;
-    border-radius:14px;
+    border-radius:16px;
+    font-weight:bold;
+    transition:.2s;
 }
 .delivery-card.active{
     border-color:#25D366;
     background:#eafff1;
+    color:#1a7f45;
 }
+
+/* ملخص */
+.summary{
+    margin-top:14px;
+    padding:12px;
+    background:#f1f8ff;
+    border-radius:14px;
+    font-size:14px;
+    display:none;
+}
+
+/* زر الطلب */
 .order-btn{
     width:100%;
     margin-top:18px;
@@ -82,7 +125,19 @@ input{
     background:#25D366;
     color:#fff;
     border:none;
-    border-radius:16px;
+    border-radius:18px;
+    transition:.2s;
+}
+.order-btn:disabled{
+    background:#a5d6b5;
+}
+.order-btn:active{transform:scale(.98)}
+
+.error{
+    margin-top:10px;
+    color:#b00020;
+    font-size:14px;
+    display:none;
 }
 </style>
 </head>
@@ -101,9 +156,9 @@ input{
 <div class="item-content">
 <div class="item-title">صانه دجاج</div>
 <div class="counter" data-name="صانه دجاج">
-<button type="button" class="minus">−</button>
+<button class="minus">−</button>
 <span>0</span>
-<button type="button" class="plus">+</button>
+<button class="plus">+</button>
 </div>
 </div>
 </div>
@@ -113,9 +168,9 @@ input{
 <div class="item-content">
 <div class="item-title">صانه لحم</div>
 <div class="counter" data-name="صانه لحم">
-<button type="button" class="minus">−</button>
+<button class="minus">−</button>
 <span>0</span>
-<button type="button" class="plus">+</button>
+<button class="plus">+</button>
 </div>
 </div>
 </div>
@@ -137,51 +192,91 @@ input{
 <input id="address" placeholder="عنوان التوصيل">
 </div>
 
-<button class="order-btn" id="sendBtn">📲 إرسال الطلب عبر واتساب</button>
+<div class="summary" id="summary"></div>
+<div class="error" id="error"></div>
+
+<button class="order-btn" id="sendBtn" disabled>
+📲 إرسال الطلب عبر واتساب
+</button>
 </div>
 
 <script>
 let deliveryType="";
+const summary=document.getElementById("summary");
+const error=document.getElementById("error");
+const sendBtn=document.getElementById("sendBtn");
 
-document.querySelectorAll(".plus").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        let span=btn.parentElement.querySelector("span");
-        span.textContent=parseInt(span.textContent)+1;
-    });
-});
+document.getElementById("name").value=
+    localStorage.getItem("clientName")||"";
 
-document.querySelectorAll(".minus").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        let span=btn.parentElement.querySelector("span");
-        let v=parseInt(span.textContent)-1;
-        span.textContent=v<0?0:v;
-    });
-});
+function vibrate(){
+    if(navigator.vibrate) navigator.vibrate(20);
+}
 
-document.querySelectorAll(".delivery-card").forEach(card=>{
-    card.addEventListener("click",()=>{
-        deliveryType=card.dataset.type;
-        document.querySelectorAll(".delivery-card").forEach(c=>c.classList.remove("active"));
-        card.classList.add("active");
-        document.getElementById("addressBox").style.display =
-            deliveryType==="توصيل"?"block":"none";
-    });
-});
-
-document.getElementById("sendBtn").addEventListener("click",()=>{
-    let order="";
+function updateSummary(){
+    let text="";
     document.querySelectorAll(".counter").forEach(c=>{
-        let qty=parseInt(c.querySelector("span").textContent);
-        if(qty>0) order+=`- ${c.dataset.name} × ${qty}\n`;
+        let q=parseInt(c.querySelector("span").textContent);
+        if(q>0) text+=`• ${c.dataset.name} × ${q}<br>`;
     });
+    if(text){
+        summary.innerHTML="<b>🧾 ملخص الطلب:</b><br>"+text;
+        summary.style.display="block";
+        sendBtn.disabled=false;
+    }else{
+        summary.style.display="none";
+        sendBtn.disabled=true;
+    }
+}
 
-    if(!order){alert("اختر وجبة");return;}
-    if(!deliveryType){alert("اختر طريقة الاستلام");return;}
+document.querySelectorAll(".plus").forEach(b=>{
+    b.onclick=()=>{
+        vibrate();
+        let s=b.parentElement.querySelector("span");
+        s.textContent=parseInt(s.textContent)+1;
+        updateSummary();
+    }
+});
+document.querySelectorAll(".minus").forEach(b=>{
+    b.onclick=()=>{
+        vibrate();
+        let s=b.parentElement.querySelector("span");
+        let v=parseInt(s.textContent)-1;
+        s.textContent=v<0?0:v;
+        updateSummary();
+    }
+});
+
+document.querySelectorAll(".delivery-card").forEach(c=>{
+    c.onclick=()=>{
+        vibrate();
+        deliveryType=c.dataset.type;
+        document.querySelectorAll(".delivery-card").forEach(x=>x.classList.remove("active"));
+        c.classList.add("active");
+        document.getElementById("addressBox").style.display=
+            deliveryType==="توصيل"?"block":"none";
+    }
+});
+
+sendBtn.onclick=()=>{
+    error.style.display="none";
+    if(!deliveryType){
+        error.textContent="❗ اختر طريقة الاستلام";
+        error.style.display="block";
+        return;
+    }
+
+    localStorage.setItem("clientName",
+        document.getElementById("name").value);
 
     let msg=`السلام عليكم 🌹\n`;
     msg+=`الاسم: ${document.getElementById("name").value}\n\n`;
-    msg+=`الطلب:\n${order}\n`;
-    msg+=`طريقة الاستلام: ${deliveryType}\n`;
+    msg+=`الطلب:\n`;
+    document.querySelectorAll(".counter").forEach(c=>{
+        let q=parseInt(c.querySelector("span").textContent);
+        if(q>0) msg+=`- ${c.dataset.name} × ${q}\n`;
+    });
+    msg+=`\nطريقة الاستلام: ${deliveryType}\n`;
     if(deliveryType==="توصيل")
         msg+=`العنوان: ${document.getElementById("address").value}\n`;
     msg+="\nشكراً 🤍";
@@ -190,7 +285,7 @@ document.getElementById("sendBtn").addEventListener("click",()=>{
         "https://wa.me/33782549043?text="+encodeURIComponent(msg),
         "_blank"
     );
-});
+};
 </script>
 
 </body>
