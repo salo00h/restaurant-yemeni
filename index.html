@@ -25,6 +25,13 @@
       --shadow:0 14px 34px rgba(0,0,0,.24);
       --shadow-strong:0 24px 60px rgba(0,0,0,.34);
 
+      /* warm background tones */
+      --page-bg:#eadcc7;
+      --page-bg-2:#f3e9d8;
+      --page-bg-3:#d9c3a2;
+      --page-edge:#e8d7bf;
+      --page-shadow:rgba(113, 73, 28, .10);
+
       /* Mobile first compact bottom UI */
       --ui-side:10px;
       --ui-gap:7px;
@@ -47,7 +54,10 @@
       width:100%;
       height:100%;
       overflow:hidden;
-      background:#150a1d;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,255,255,.45), transparent 28%),
+        radial-gradient(circle at 50% 120%, rgba(183,132,60,.12), transparent 34%),
+        linear-gradient(180deg, var(--page-bg-2) 0%, var(--page-bg) 58%, #e3d0b3 100%);
       color:var(--text);
       font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
@@ -241,7 +251,9 @@
       opacity:0;
       transform:scale(1.01);
       transition:opacity .85s ease, transform .85s ease;
-      background:#150a1d;
+      background:
+        radial-gradient(circle at 50% 12%, rgba(255,255,255,.36), transparent 26%),
+        linear-gradient(180deg, var(--page-bg-2) 0%, var(--page-bg) 62%, #e1cfb2 100%);
     }
 
     .app.ready{
@@ -254,7 +266,20 @@
       width:100vw;
       height:var(--app-h);
       overflow:hidden;
-      background:#150a1d;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(255,255,255,.26), transparent 30%),
+        linear-gradient(180deg, #f1e6d4 0%, #e7d7bf 52%, #e1cfb2 100%);
+    }
+
+    .stage::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(168,120,49,.08), transparent 34%),
+        linear-gradient(90deg, rgba(243,233,216,.96), rgba(243,233,216,.28) 13%, rgba(243,233,216,0) 24%, rgba(243,233,216,0) 76%, rgba(243,233,216,.28) 87%, rgba(243,233,216,.96) 100%);
     }
 
     .menu-bg,
@@ -276,12 +301,27 @@
       background-repeat:no-repeat;
       background-position:center top;
       background-size:100% 100%;
+      filter:drop-shadow(0 18px 36px rgba(120, 79, 28, .12));
+    }
+
+    .menu-bg::before{
+      content:"";
+      position:absolute;
+      inset:-22px -28px;
+      z-index:-1;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 50% 46%, rgba(255,236,205,.78), rgba(255,236,205,.24) 40%, transparent 70%);
+      filter:blur(20px);
+      opacity:.75;
     }
 
     .image-frame{
       top:var(--menu-top-offset);
       z-index:3;
       pointer-events:none;
+      perspective:1200px;
+      transform:translateX(-50%) translateZ(0);
     }
 
     .menu-safe-fade{
@@ -292,7 +332,18 @@
       height:calc(var(--bottom-ui-total) + 8px);
       z-index:2;
       pointer-events:none;
-      background:linear-gradient(to top, rgba(21,10,29,.18), rgba(21,10,29,.05) 45%, rgba(21,10,29,0));
+      background:linear-gradient(to top, rgba(236,223,201,.72), rgba(236,223,201,.24) 46%, rgba(236,223,201,0));
+    }
+
+    /* side edge softening for mobile */
+    .mobile-side-blend{
+      position:absolute;
+      inset:0;
+      z-index:2;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg, rgba(238,226,205,.92) 0%, rgba(238,226,205,0) 10%, rgba(238,226,205,0) 90%, rgba(238,226,205,.92) 100%);
+      opacity:.68;
     }
 
     /* =========================
@@ -313,172 +364,251 @@
         filter .2s ease,
         box-shadow .2s ease,
         background .2s ease;
-      will-change:transform, opacity;
-      backface-visibility:hidden;
-      -webkit-backface-visibility:hidden;
-      transform:translateZ(0);
+      will-change:transform;
+      isolation:isolate;
+      overflow:visible;
+      --rx: 0deg;
+      --ry: 0deg;
+      --idle-lift: 0px;
+      --float-y: 0px;
+      --float-scale: 1;
+      --piece-radius: 18px;
+      --piece-opacity: 1;
+      --piece-shadow: drop-shadow(0 10px 16px rgba(0,0,0,.10));
     }
 
     .hotspot::before{
       content:"";
       position:absolute;
       inset:0;
-      border-radius:inherit;
-      background:
-        radial-gradient(circle at 30% 28%, rgba(255,255,255,.12), transparent 40%),
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      border-radius:var(--piece-radius);
+      background-image:var(--menu-url);
+      background-repeat:no-repeat;
+      background-size:var(--bg-w, 100% 100%);
+      background-position:var(--bg-x, center) var(--bg-y, top);
+      transform:
+        perspective(1100px)
+        translate3d(0, var(--float-y), 0)
+        rotateX(calc(var(--rx) * .45))
+        rotateY(calc(var(--ry) * .55))
+        scale(var(--float-scale));
+      transform-origin:center center;
+      opacity:var(--piece-opacity);
+      filter:var(--piece-shadow);
+      transition:
+        transform .34s cubic-bezier(.2,.7,.2,1),
+        filter .34s ease,
+        opacity .24s ease;
+      will-change:transform;
+      z-index:1;
+      pointer-events:none;
       box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.07),
-        0 8px 16px rgba(0,0,0,.12);
-      opacity:.14;
-      transition:opacity .2s ease;
-      will-change:opacity, box-shadow;
-      transform:translateZ(0);
+        inset 0 0 0 1px rgba(255,255,255,.03);
     }
 
     .hotspot::after{
       content:"";
       position:absolute;
-      inset:-3px;
-      border-radius:20px;
-      background:radial-gradient(circle at 50% 50%, rgba(255,220,120,.22), transparent 70%);
-      opacity:.16;
-      filter:blur(7px);
-      transition:opacity .2s ease, transform .2s ease;
-      z-index:-1;
-      will-change:opacity, transform;
-      transform:translateZ(0);
+      inset:-4px;
+      border-radius:calc(var(--piece-radius) + 4px);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,224,150,.24), transparent 70%);
+      opacity:.0;
+      filter:blur(10px);
+      transition:opacity .28s ease, transform .28s ease;
+      z-index:0;
+      pointer-events:none;
     }
 
-    /* Mobile-visible idle pulse */
+    .hotspot .interactive-ring{
+      display:none;
+    }
+
+    /* lightweight outline layer kept subtle */
+    .hotspot > span{
+      display:none;
+    }
+
     .hotspot--main{
-      animation:hotspotBreath 2.9s ease-in-out infinite;
+      animation:hotspotPresence 4.8s ease-in-out infinite;
+      --piece-shadow:
+        drop-shadow(0 8px 14px rgba(0,0,0,.10))
+        drop-shadow(0 0 0 rgba(255,214,120,0));
     }
 
     .hotspot--main::before{
-      animation:hotspotGlow 2.9s ease-in-out infinite;
+      animation:dishFloat 4.8s ease-in-out infinite;
     }
 
     .hotspot--main::after{
-      animation:hotspotHalo 2.9s ease-in-out infinite;
+      animation:dishGlow 4.8s ease-in-out infinite;
     }
 
     .hotspot--sauce{
-      animation:hotspotBreathSoft 3.8s ease-in-out infinite;
+      animation:hotspotPresenceSoft 5.8s ease-in-out infinite;
+      --piece-shadow:
+        drop-shadow(0 5px 10px rgba(0,0,0,.08))
+        drop-shadow(0 0 0 rgba(168,255,168,0));
     }
 
     .hotspot--sauce::before{
-      animation:hotspotGlowSoft 3.8s ease-in-out infinite;
+      animation:sauceFloat 5.8s ease-in-out infinite;
     }
 
     .hotspot--sauce::after{
-      animation:hotspotHaloSoft 3.8s ease-in-out infinite;
+      animation:sauceGlow 5.8s ease-in-out infinite;
     }
 
-    @keyframes hotspotBreath{
+    @keyframes hotspotPresence{
       0%,100%{
-        transform:translateZ(0) scale(1);
+        transform:translateZ(0);
       }
       50%{
-        transform:translateZ(0) scale(1.02);
+        transform:translate3d(0,-1px,0);
       }
     }
 
-    @keyframes hotspotGlow{
+    @keyframes hotspotPresenceSoft{
       0%,100%{
-        opacity:.14;
-        box-shadow:
-          inset 0 0 0 1px rgba(255,255,255,.07),
-          0 8px 16px rgba(0,0,0,.12);
+        transform:translateZ(0);
       }
       50%{
-        opacity:.28;
-        box-shadow:
-          inset 0 0 0 1px rgba(255,255,255,.12),
-          0 12px 22px rgba(0,0,0,.16);
+        transform:translate3d(0,-.5px,0);
       }
     }
 
-    @keyframes hotspotHalo{
+    @keyframes dishFloat{
       0%,100%{
-        opacity:.12;
-        transform:translateZ(0) scale(1);
+        transform:
+          perspective(1100px)
+          translate3d(0, 0px, 0)
+          rotateX(-1.2deg)
+          rotateY(1.1deg)
+          scale(1);
+        filter:
+          drop-shadow(0 8px 14px rgba(0,0,0,.10))
+          drop-shadow(0 0 0 rgba(255,214,120,0));
+      }
+      25%{
+        transform:
+          perspective(1100px)
+          translate3d(0, -1.5px, 0)
+          rotateX(-1.8deg)
+          rotateY(1.8deg)
+          scale(1.011);
       }
       50%{
-        opacity:.28;
-        transform:translateZ(0) scale(1.025);
+        transform:
+          perspective(1100px)
+          translate3d(0, -2.5px, 0)
+          rotateX(-2.2deg)
+          rotateY(-1.8deg)
+          scale(1.019);
+        filter:
+          drop-shadow(0 12px 18px rgba(0,0,0,.14))
+          drop-shadow(0 0 10px rgba(255,215,110,.12));
+      }
+      75%{
+        transform:
+          perspective(1100px)
+          translate3d(0, -1.2px, 0)
+          rotateX(-1.6deg)
+          rotateY(-1.1deg)
+          scale(1.01);
       }
     }
 
-    @keyframes hotspotBreathSoft{
+    @keyframes sauceFloat{
       0%,100%{
-        transform:translateZ(0) scale(1);
+        transform:
+          perspective(900px)
+          translate3d(0, 0px, 0)
+          rotateX(-.8deg)
+          rotateY(.7deg)
+          scale(1);
       }
       50%{
-        transform:translateZ(0) scale(1.012);
+        transform:
+          perspective(900px)
+          translate3d(0, -1.2px, 0)
+          rotateX(-1.3deg)
+          rotateY(-.8deg)
+          scale(1.01);
       }
     }
 
-    @keyframes hotspotGlowSoft{
-      0%,100%{
-        opacity:.11;
-        box-shadow:
-          inset 0 0 0 1px rgba(255,255,255,.06),
-          0 6px 12px rgba(0,0,0,.09);
-      }
-      50%{
-        opacity:.20;
-        box-shadow:
-          inset 0 0 0 1px rgba(255,255,255,.10),
-          0 9px 16px rgba(0,0,0,.12);
-      }
-    }
-
-    @keyframes hotspotHaloSoft{
+    @keyframes dishGlow{
       0%,100%{
         opacity:.10;
-        transform:translateZ(0) scale(1);
+        transform:scale(.985);
+      }
+      50%{
+        opacity:.38;
+        transform:scale(1.02);
+      }
+    }
+
+    @keyframes sauceGlow{
+      0%,100%{
+        opacity:.06;
+        transform:scale(.99);
       }
       50%{
         opacity:.18;
-        transform:translateZ(0) scale(1.014);
+        transform:scale(1.012);
       }
     }
 
     .hotspot:active,
     .hotspot.active{
-      transform:translateZ(0) translateY(-1px) scale(1.018);
-      filter:drop-shadow(0 8px 14px rgba(0,0,0,.18));
-      animation-play-state:paused;
+      transform:translateY(-1px) scale(1.01);
+      filter:drop-shadow(0 8px 14px rgba(0,0,0,.12));
+      animation:none;
     }
 
     .hotspot:active::before,
     .hotspot.active::before{
-      opacity:.24;
-      animation-play-state:paused;
+      animation:none;
+      transform:
+        perspective(1200px)
+        translate3d(0, -2px, 0)
+        rotateX(-2deg)
+        rotateY(2deg)
+        scale(1.022);
+      filter:
+        drop-shadow(0 13px 20px rgba(0,0,0,.16))
+        drop-shadow(0 0 12px rgba(255,214,120,.18));
     }
 
     .hotspot:active::after,
     .hotspot.active::after{
-      opacity:.32;
-      transform:translateZ(0) scale(1.01);
-      animation-play-state:paused;
+      opacity:.42;
+      transform:scale(1.03);
+      animation:none;
     }
 
     @media (hover:hover) and (pointer:fine){
       .hotspot:hover{
-        transform:translateZ(0) translateY(-2px) scale(1.022);
-        filter:drop-shadow(0 10px 14px rgba(0,0,0,.18));
-        animation-play-state:paused;
+        transform:translateY(-1px) scale(1.008);
+        filter:drop-shadow(0 10px 14px rgba(0,0,0,.12));
+        animation:none;
       }
       .hotspot:hover::before{
-        opacity:.24;
-        animation-play-state:paused;
+        animation:none;
+        transform:
+          perspective(1200px)
+          translate3d(0, -2px, 0)
+          rotateX(calc(var(--rx) * .65 + -2deg))
+          rotateY(calc(var(--ry) * .8 + 2deg))
+          scale(1.024);
+        filter:
+          drop-shadow(0 13px 20px rgba(0,0,0,.16))
+          drop-shadow(0 0 12px rgba(255,214,120,.16));
       }
       .hotspot:hover::after{
-        opacity:.34;
-        transform:translateZ(0) scale(1.02);
-        animation-play-state:paused;
+        opacity:.44;
+        transform:scale(1.035);
+        animation:none;
       }
     }
 
@@ -648,7 +778,7 @@
       min-height:var(--cart-h);
       border-radius:20px;
       padding:9px 11px 8px;
-      background:linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,255,255,.09));
+      background:linear-gradient(180deg, rgba(58,31,64,.72), rgba(42,24,52,.68));
       border:1px solid var(--border);
     }
 
@@ -832,6 +962,17 @@
 
       .hotspot{
         border-radius:22px;
+        --piece-radius:22px;
+      }
+
+      .stage::before{
+        background:
+          radial-gradient(circle at 50% 40%, rgba(168,120,49,.10), transparent 32%),
+          linear-gradient(90deg, rgba(243,233,216,.98), rgba(243,233,216,.72) 18%, rgba(243,233,216,.22) 34%, rgba(243,233,216,.22) 66%, rgba(243,233,216,.72) 82%, rgba(243,233,216,.98) 100%);
+      }
+
+      .mobile-side-blend{
+        opacity:.42;
       }
     }
 
@@ -844,6 +985,11 @@
       .wa{
         width:340px;
       }
+
+      .menu-bg{
+        filter:
+          drop-shadow(0 24px 42px rgba(120, 79, 28, .14));
+      }
     }
 
     @media (prefers-reduced-motion: reduce){
@@ -854,6 +1000,10 @@
       .hotspot--sauce::before,
       .hotspot--sauce::after{
         animation:none !important;
+      }
+
+      .hotspot::before{
+        transition:none !important;
       }
     }
   </style>
@@ -884,6 +1034,7 @@
   <main class="app" id="app">
     <section class="stage">
       <div class="menu-bg" aria-label="Menu Yamani Food"></div>
+      <div class="mobile-side-blend" aria-hidden="true"></div>
       <div class="menu-safe-fade" aria-hidden="true"></div>
 
       <div class="image-frame" id="imageFrame">
@@ -1032,6 +1183,7 @@
     const cartCount = document.getElementById("cartCount");
     const cartItems = document.getElementById("cartItems");
     const whatsappBtn = document.getElementById("whatsappBtn");
+    const imageFrame = document.getElementById("imageFrame");
     const hotspots = document.querySelectorAll(".hotspot");
 
     let selectedDish = null;
@@ -1042,18 +1194,77 @@
       document.documentElement.style.setProperty("--app-h", `${vh}px`);
     }
 
+    function syncHotspotArtwork(){
+      if (!imageFrame) return;
+
+      const frameRect = imageFrame.getBoundingClientRect();
+      const frameW = Math.max(frameRect.width, 1);
+      const frameH = Math.max(frameRect.height, 1);
+
+      hotspots.forEach((btn, index) => {
+        const left = btn.offsetLeft;
+        const top = btn.offsetTop;
+        const width = btn.offsetWidth;
+        const height = btn.offsetHeight;
+
+        btn.style.setProperty("--bg-w", `${frameW}px ${frameH}px`);
+        btn.style.setProperty("--bg-x", `${-left}px`);
+        btn.style.setProperty("--bg-y", `${-top}px`);
+
+        const radius = getComputedStyle(btn).borderRadius || "18px";
+        btn.style.setProperty("--piece-radius", radius);
+
+        const delay = (index % 4) * 0.28;
+        btn.style.animationDelay = `${delay}s`;
+        btn.style.setProperty("--anim-delay", `${delay}s`);
+        btn.style.setProperty("--piece-opacity", "1");
+      });
+    }
+
+    function resetHotspotTilt(btn){
+      btn.style.setProperty("--rx", "0deg");
+      btn.style.setProperty("--ry", "0deg");
+    }
+
+    function handlePointerTilt(event, btn){
+      const rect = btn.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const px = (x / rect.width) - 0.5;
+      const py = (y / rect.height) - 0.5;
+
+      const ry = (px * 4.2).toFixed(2);
+      const rx = (py * -4.2).toFixed(2);
+
+      btn.style.setProperty("--rx", `${rx}deg`);
+      btn.style.setProperty("--ry", `${ry}deg`);
+    }
+
     setAppHeight();
-    window.addEventListener("resize", setAppHeight);
+    window.addEventListener("resize", () => {
+      setAppHeight();
+      syncHotspotArtwork();
+    });
+
     window.addEventListener("orientationchange", () => {
-      setTimeout(setAppHeight, 120);
+      setTimeout(() => {
+        setAppHeight();
+        syncHotspotArtwork();
+      }, 120);
     });
 
     window.addEventListener("load", () => {
       setAppHeight();
+      syncHotspotArtwork();
+
       setTimeout(() => {
         intro.classList.add("hide");
         app.classList.add("ready");
+        syncHotspotArtwork();
       }, 2550);
+
+      setTimeout(syncHotspotArtwork, 300);
+      setTimeout(syncHotspotArtwork, 900);
     });
 
     function openModal(id, triggerEl){
@@ -1088,6 +1299,20 @@
       btn.addEventListener("touchend", () => {
         setTimeout(() => btn.classList.remove("active"), 120);
       }, { passive: true });
+
+      btn.addEventListener("pointermove", (e) => {
+        if (window.matchMedia("(hover:hover) and (pointer:fine)").matches) {
+          handlePointerTilt(e, btn);
+        }
+      });
+
+      btn.addEventListener("pointerleave", () => {
+        resetHotspotTilt(btn);
+      });
+
+      btn.addEventListener("blur", () => {
+        resetHotspotTilt(btn);
+      });
     });
 
     closeModalBtn.addEventListener("click", closeModal);
