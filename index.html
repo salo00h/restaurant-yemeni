@@ -276,21 +276,12 @@
       background-repeat:no-repeat;
       background-position:center top;
       background-size:100% 100%;
-      transform:translateX(-50%) translateZ(0);
-      will-change:transform;
-      backface-visibility:hidden;
-      -webkit-backface-visibility:hidden;
     }
 
     .image-frame{
       top:var(--menu-top-offset);
       z-index:3;
       pointer-events:none;
-      isolation:isolate;
-      transform:translateX(-50%) translateZ(0);
-      will-change:transform;
-      backface-visibility:hidden;
-      -webkit-backface-visibility:hidden;
     }
 
     .menu-safe-fade{
@@ -316,33 +307,19 @@
       border-radius:18px;
       cursor:pointer;
       outline:none;
-      transition:filter .2s ease;
-      will-change:filter, opacity;
+      transform-style:preserve-3d;
+      transition:
+        transform .2s ease,
+        filter .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+      will-change:transform, opacity;
       backface-visibility:hidden;
       -webkit-backface-visibility:hidden;
       transform:translateZ(0);
-      overflow:visible;
-      isolation:isolate;
-      contain:layout style paint;
-      -webkit-transform:translateZ(0);
     }
 
-    .hotspot-visual{
-      position:absolute;
-      inset:0;
-      border-radius:inherit;
-      pointer-events:none;
-      overflow:visible;
-      transform:translate3d(0,0,0) scale(1);
-      transform-origin:center center;
-      will-change:transform, opacity, box-shadow;
-      backface-visibility:hidden;
-      -webkit-backface-visibility:hidden;
-      -webkit-transform:translate3d(0,0,0) scale(1);
-      -webkit-mask-image:-webkit-radial-gradient(white, black);
-    }
-
-    .hotspot-visual::before{
+    .hotspot::before{
       content:"";
       position:absolute;
       inset:0;
@@ -354,60 +331,56 @@
         inset 0 0 0 1px rgba(255,255,255,.07),
         0 8px 16px rgba(0,0,0,.12);
       opacity:.14;
-      transition:opacity .2s ease, box-shadow .2s ease;
+      transition:opacity .2s ease;
       will-change:opacity, box-shadow;
       transform:translateZ(0);
-      backface-visibility:hidden;
-      -webkit-backface-visibility:hidden;
     }
 
-    .hotspot-visual::after{
+    .hotspot::after{
       content:"";
       position:absolute;
       inset:-3px;
-      border-radius:inherit;
+      border-radius:20px;
       background:radial-gradient(circle at 50% 50%, rgba(255,220,120,.22), transparent 70%);
       opacity:.16;
       filter:blur(7px);
       transition:opacity .2s ease, transform .2s ease;
       z-index:-1;
       will-change:opacity, transform;
-      transform:translateZ(0) scale(1);
-      backface-visibility:hidden;
-      -webkit-backface-visibility:hidden;
+      transform:translateZ(0);
     }
 
     /* Mobile-visible idle pulse */
-    .hotspot--main .hotspot-visual{
+    .hotspot--main{
       animation:hotspotBreath 2.9s ease-in-out infinite;
     }
 
-    .hotspot--main .hotspot-visual::before{
+    .hotspot--main::before{
       animation:hotspotGlow 2.9s ease-in-out infinite;
     }
 
-    .hotspot--main .hotspot-visual::after{
+    .hotspot--main::after{
       animation:hotspotHalo 2.9s ease-in-out infinite;
     }
 
-    .hotspot--sauce .hotspot-visual{
+    .hotspot--sauce{
       animation:hotspotBreathSoft 3.8s ease-in-out infinite;
     }
 
-    .hotspot--sauce .hotspot-visual::before{
+    .hotspot--sauce::before{
       animation:hotspotGlowSoft 3.8s ease-in-out infinite;
     }
 
-    .hotspot--sauce .hotspot-visual::after{
+    .hotspot--sauce::after{
       animation:hotspotHaloSoft 3.8s ease-in-out infinite;
     }
 
     @keyframes hotspotBreath{
       0%,100%{
-        transform:translate3d(0,0,0) scale(1);
+        transform:translateZ(0) scale(1);
       }
       50%{
-        transform:translate3d(0,-1px,0) scale(1.02);
+        transform:translateZ(0) scale(1.02);
       }
     }
 
@@ -439,10 +412,10 @@
 
     @keyframes hotspotBreathSoft{
       0%,100%{
-        transform:translate3d(0,0,0) scale(1);
+        transform:translateZ(0) scale(1);
       }
       50%{
-        transform:translate3d(0,-.5px,0) scale(1.012);
+        transform:translateZ(0) scale(1.012);
       }
     }
 
@@ -474,23 +447,19 @@
 
     .hotspot:active,
     .hotspot.active{
+      transform:translateZ(0) translateY(-1px) scale(1.018);
       filter:drop-shadow(0 8px 14px rgba(0,0,0,.18));
-    }
-
-    .hotspot:active .hotspot-visual,
-    .hotspot.active .hotspot-visual{
-      transform:translate3d(0,-1px,0) scale(1.018);
       animation-play-state:paused;
     }
 
-    .hotspot:active .hotspot-visual::before,
-    .hotspot.active .hotspot-visual::before{
+    .hotspot:active::before,
+    .hotspot.active::before{
       opacity:.24;
       animation-play-state:paused;
     }
 
-    .hotspot:active .hotspot-visual::after,
-    .hotspot.active .hotspot-visual::after{
+    .hotspot:active::after,
+    .hotspot.active::after{
       opacity:.32;
       transform:translateZ(0) scale(1.01);
       animation-play-state:paused;
@@ -498,17 +467,15 @@
 
     @media (hover:hover) and (pointer:fine){
       .hotspot:hover{
+        transform:translateZ(0) translateY(-2px) scale(1.022);
         filter:drop-shadow(0 10px 14px rgba(0,0,0,.18));
-      }
-      .hotspot:hover .hotspot-visual{
-        transform:translate3d(0,-2px,0) scale(1.022);
         animation-play-state:paused;
       }
-      .hotspot:hover .hotspot-visual::before{
+      .hotspot:hover::before{
         opacity:.24;
         animation-play-state:paused;
       }
-      .hotspot:hover .hotspot-visual::after{
+      .hotspot:hover::after{
         opacity:.34;
         transform:translateZ(0) scale(1.02);
         animation-play-state:paused;
@@ -880,12 +847,12 @@
     }
 
     @media (prefers-reduced-motion: reduce){
-      .hotspot--main .hotspot-visual,
-      .hotspot--main .hotspot-visual::before,
-      .hotspot--main .hotspot-visual::after,
-      .hotspot--sauce .hotspot-visual,
-      .hotspot--sauce .hotspot-visual::before,
-      .hotspot--sauce .hotspot-visual::after{
+      .hotspot--main,
+      .hotspot--main::before,
+      .hotspot--main::after,
+      .hotspot--sauce,
+      .hotspot--sauce::before,
+      .hotspot--sauce::after{
         animation:none !important;
       }
     }
@@ -925,49 +892,49 @@
           data-id="zerbian-simple"
           aria-label="Zerbian Simple"
           style="left:3.2%; top:18.9%; width:46.2%; height:21.6%;"
-        ><span class="hotspot-visual" aria-hidden="true"></span></button>
+        ></button>
 
         <button
           class="hotspot hotspot--main"
           data-id="zerbian-max"
           aria-label="Zerbian Max"
           style="left:50.5%; top:18.9%; width:46.2%; height:21.6%;"
-        ><span class="hotspot-visual" aria-hidden="true"></span></button>
+        ></button>
 
         <button
           class="hotspot hotspot--main"
           data-id="box-simple"
           aria-label="Box Simple"
           style="left:3.0%; top:41.0%; width:46.8%; height:26.8%;"
-        ><span class="hotspot-visual" aria-hidden="true"></span></button>
+        ></button>
 
         <button
           class="hotspot hotspot--main"
           data-id="box-max"
           aria-label="Box Max"
           style="left:50.2%; top:41.0%; width:46.8%; height:26.8%;"
-        ><span class="hotspot-visual" aria-hidden="true"></span></button>
+        ></button>
 
         <button
           class="hotspot hotspot--sauce"
           data-id="daqoos"
           aria-label="Daqoos"
           style="left:6.3%; top:72.0%; width:26.2%; height:12.4%; border-radius:24px;"
-        ><span class="hotspot-visual" aria-hidden="true"></span></button>
+        ></button>
 
         <button
           class="hotspot hotspot--sauce"
           data-id="labneh"
           aria-label="Labneh"
           style="left:36.8%; top:72.0%; width:26.2%; height:12.4%; border-radius:24px;"
-        ><span class="hotspot-visual" aria-hidden="true"></span></button>
+        ></button>
 
         <button
           class="hotspot hotspot--sauce"
           data-id="sahawiq"
           aria-label="Sahawiq"
           style="left:67.0%; top:72.0%; width:24.8%; height:12.4%; border-radius:24px;"
-        ><span class="hotspot-visual" aria-hidden="true"></span></button>
+        ></button>
       </div>
     </section>
   </main>
