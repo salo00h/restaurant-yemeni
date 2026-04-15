@@ -1,438 +1,1012 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RIZ HADRAMI</title>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <title>Yamani Food — Menu interactif</title>
+  <style>
+    :root{
+      --menu-url:url("https://i.postimg.cc/tCnNnsh2/Whats-App-Image-2026-04-15-at-17-19-13.jpg");
+      --menu-ratio:0.66625; /* largeur / hauteur de l'image */
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
 
-<style>
-*{box-sizing:border-box}
-body{
-    margin:0;
-    padding:12px;
-    font-family:Tahoma,Arial,sans-serif;
-    direction:rtl;
-    background:#f4f4f4;
-    padding-bottom:78px;
-}
-.container{
-    max-width:420px;
-    margin:auto;
-    background:#fff;
-    padding:14px;
-    border-radius:18px;
-    box-shadow:0 10px 30px rgba(0,0,0,.12);
-}
-h1{text-align:center;color:#7a2e00;margin:6px 0}
-.subtitle{text-align:center;font-size:14px;color:#555}
-.note{
-    background:#fff3cd;
-    padding:10px;
-    border-radius:12px;
-    font-size:13px;
-    margin:12px 0;
-    text-align:center;
-}
+      --text:#ffffff;
+      --muted:rgba(255,255,255,.82);
+      --glass:rgba(255,255,255,.14);
+      --glass-strong:rgba(255,255,255,.18);
+      --border:rgba(255,255,255,.18);
+      --shadow:0 16px 40px rgba(0,0,0,.30);
+      --shadow-strong:0 20px 55px rgba(0,0,0,.38);
+      --radius:22px;
 
-/* Chef */
-.chef{
-    display:flex;align-items:center;gap:10px;
-    background:#f9f9f9;padding:10px;border-radius:14px;
-    border:1px solid #eee;margin:12px 0;
-}
-.chef img{
-    width:56px;height:56px;border-radius:50%;
-    object-fit:cover;
-}
+      --cart-h:104px;
+      --wa-h:58px;
+      --bottom-stack:calc(var(--cart-h) + var(--wa-h) + 18px + var(--safe-bottom));
+    }
 
-/* Hours */
-.hours{
-    background:#eef6ff;padding:10px;border-radius:12px;
-    font-size:13px;margin:12px 0;text-align:center;
-    border:1px solid #d7e8ff;
-}
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+    }
 
-/* Menu */
-.menu{display:flex;flex-direction:column;gap:14px}
-.item{border:1px solid #ddd;border-radius:16px;overflow:hidden}
-.item img{width:100%;height:150px;object-fit:cover}
-.item-content{padding:12px}
-.item-title{font-weight:bold}
-.item-fr{font-size:13px;color:#666}
-.price{font-size:14px;color:#444}
+    html,body{
+      margin:0;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      background:#150a1d;
+      color:var(--text);
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-/* Counter */
-.counter{display:flex;align-items:center;gap:10px}
-.counter button{
-    width:36px;height:36px;font-size:20px;
-    border:none;border-radius:10px;background:#eee;
-}
-.counter span{min-width:36px;text-align:center;font-weight:bold}
+    body{
+      position:relative;
+      touch-action:manipulation;
+      overscroll-behavior:none;
+    }
 
-/* Sections */
-.section{
-    margin-top:16px;padding:12px;background:#fafafa;
-    border-radius:16px;border:1px solid #ddd;
-}
+    button,input,textarea,select{
+      font:inherit;
+    }
 
-/* Inputs */
-input,textarea{
-    width:100%;padding:12px;font-size:16px;
-    border-radius:12px;border:1px solid #ccc;margin-top:6px;
-}
+    /* =========================
+       INTRO MOBILE FIRST
+    ========================= */
+    .intro{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:grid;
+      place-items:center;
+      padding:
+        calc(20px + var(--safe-top))
+        calc(18px + var(--safe-right))
+        calc(22px + var(--safe-bottom))
+        calc(18px + var(--safe-left));
+      background:
+        radial-gradient(circle at 18% 20%, rgba(255,255,255,.13), transparent 24%),
+        radial-gradient(circle at 84% 26%, rgba(255,210,90,.14), transparent 18%),
+        radial-gradient(circle at 50% 100%, rgba(255,255,255,.08), transparent 20%),
+        linear-gradient(140deg, #5b1f8f 0%, #281149 44%, #13091f 100%);
+      transition:opacity .8s ease, visibility .8s ease;
+    }
 
-/* Delivery */
-.delivery{display:flex;gap:10px}
-.delivery div{
-    flex:1;padding:12px;text-align:center;
-    border:2px solid #ddd;border-radius:14px;cursor:pointer;
-}
-.delivery .active{border-color:#25D366;background:#eafff1}
+    .intro.hide{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
 
-/* Day */
-.day-pick{display:flex;gap:10px;margin-top:8px}
-.day-pick button{
-    flex:1;padding:12px;border:none;
-    border-radius:14px;background:#eee;cursor:pointer;
-}
-.day-pick button.active{background:#25D366;color:#fff}
+    .intro-card{
+      width:min(100%, 420px);
+      padding:20px 16px 18px;
+      border-radius:28px;
+      background:linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.07));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 25px 60px rgba(0,0,0,.28);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+    }
 
-/* Address inputs */
-.address-inputs {
-    margin-top: 10px;
-}
-.address-inputs input {
-    margin-bottom: 8px;
-}
+    .intro-title{
+      margin:0;
+      font-size:clamp(1.35rem, 5vw, 2rem);
+      font-weight:900;
+      text-align:center;
+      letter-spacing:.02em;
+    }
 
-/* Summary */
-.summary{background:#eef6ff;padding:12px;border-radius:14px}
+    .intro-sub{
+      margin:8px 0 16px;
+      text-align:center;
+      color:rgba(255,255,255,.86);
+      font-size:.96rem;
+      line-height:1.45;
+    }
 
-/* Button */
-.order-btn{
-    width:100%;margin-top:18px;padding:16px;
-    font-size:18px;background:#25D366;color:#fff;
-    border:none;border-radius:16px;
-}
+    .runway{
+      position:relative;
+      width:100%;
+      height:108px;
+      border-radius:999px;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:var(--shadow);
+    }
 
-/* Total bar */
-.total-bar{
-    position:fixed;left:0;right:0;bottom:0;
-    background:#25D366;color:#fff;
-    padding:14px;text-align:center;font-size:18px;
-}
-</style>
+    .runway::before{
+      content:"";
+      position:absolute;
+      left:8%;
+      right:8%;
+      bottom:20px;
+      height:8px;
+      border-radius:999px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+      opacity:.55;
+      filter:blur(.4px);
+    }
+
+    .chef{
+      position:absolute;
+      left:-84px;
+      bottom:18px;
+      width:84px;
+      height:84px;
+      animation:
+        chefWalk 2.75s cubic-bezier(.52,.01,.25,1) forwards,
+        chefBounce .62s ease-in-out infinite;
+      transform-origin:center bottom;
+      filter:drop-shadow(0 10px 16px rgba(0,0,0,.35));
+    }
+
+    .chef .emoji{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      font-size:62px;
+      line-height:1;
+      animation:chefTilt .78s ease-in-out infinite alternate;
+    }
+
+    .chef .steam{
+      position:absolute;
+      left:54px;
+      top:-8px;
+      width:24px;
+      height:34px;
+    }
+
+    .chef .steam span{
+      position:absolute;
+      bottom:0;
+      width:7px;
+      height:24px;
+      border-radius:999px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.82));
+      filter:blur(1px);
+      opacity:0;
+      animation:steamUp 1.1s linear infinite;
+    }
+
+    .chef .steam span:nth-child(1){left:0; animation-delay:.08s;}
+    .chef .steam span:nth-child(2){left:8px; animation-delay:.32s;}
+    .chef .steam span:nth-child(3){left:16px; animation-delay:.56s;}
+
+    .loading{
+      display:flex;
+      justify-content:center;
+      gap:9px;
+      padding-top:14px;
+    }
+
+    .loading span{
+      width:9px;
+      height:9px;
+      border-radius:50%;
+      background:#fff;
+      opacity:.3;
+      box-shadow:0 0 14px rgba(255,255,255,.25);
+      animation:dotPulse 1s ease-in-out infinite;
+    }
+
+    .loading span:nth-child(2){animation-delay:.16s}
+    .loading span:nth-child(3){animation-delay:.32s}
+
+    @keyframes chefWalk{
+      from{ left:-84px; }
+      to{ left:calc(100% - 72px); }
+    }
+    @keyframes chefBounce{
+      0%,100%{ transform:translateY(0) scale(1); }
+      50%{ transform:translateY(-7px) scale(1.02); }
+    }
+    @keyframes chefTilt{
+      from{ transform:rotate(-4deg); }
+      to{ transform:rotate(4deg); }
+    }
+    @keyframes steamUp{
+      0%{ transform:translateY(10px) scaleY(.7); opacity:0; }
+      22%{ opacity:.7; }
+      100%{ transform:translateY(-16px) scaleY(1.15); opacity:0; }
+    }
+    @keyframes dotPulse{
+      0%,100%{ transform:scale(.9); opacity:.25; }
+      50%{ transform:scale(1.25); opacity:1; }
+    }
+
+    /* =========================
+       APP
+    ========================= */
+    .app{
+      position:fixed;
+      inset:0;
+      opacity:0;
+      transform:scale(1.015);
+      transition:opacity .85s ease, transform .85s ease;
+      background:#150a1d;
+    }
+
+    .app.ready{
+      opacity:1;
+      transform:scale(1);
+    }
+
+    .stage{
+      position:relative;
+      width:100vw;
+      height:100vh;
+      overflow:hidden;
+      background:#150a1d;
+    }
+
+    /* image du menu = le site entier */
+    .menu-bg{
+      position:absolute;
+      inset:0;
+      background-image:var(--menu-url);
+      background-repeat:no-repeat;
+      background-position:center center;
+      background-size:contain;
+      z-index:1;
+    }
+
+    /* zone réelle affichée de l'image */
+    .image-frame{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%, -50%);
+      width:min(100vw, calc(100vh * var(--menu-ratio)));
+      height:min(100vh, calc(100vw / var(--menu-ratio)));
+      z-index:3;
+      pointer-events:none;
+    }
+
+    /* sur mobile on garde l'image bien visible
+       et on évite que la barre du bas cache le contenu */
+    .menu-safe-fade{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:calc(var(--bottom-stack) + 20px);
+      z-index:2;
+      pointer-events:none;
+      background:linear-gradient(to top, rgba(21,10,29,.34), rgba(21,10,29,0));
+    }
+
+    .hotspot{
+      position:absolute;
+      pointer-events:auto;
+      border:none;
+      padding:0;
+      background:transparent;
+      border-radius:18px;
+      cursor:pointer;
+      outline:none;
+      transform-style:preserve-3d;
+      transition:
+        transform .22s ease,
+        filter .22s ease,
+        box-shadow .22s ease,
+        background .22s ease;
+      will-change:transform;
+    }
+
+    .hotspot::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      background:
+        radial-gradient(circle at 30% 28%, rgba(255,255,255,.12), transparent 38%),
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.015));
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.08),
+        0 10px 20px rgba(0,0,0,.14);
+      opacity:.14;
+      transition:opacity .22s ease;
+    }
+
+    .hotspot::after{
+      content:"";
+      position:absolute;
+      inset:-3px;
+      border-radius:22px;
+      background:radial-gradient(circle at 50% 50%, rgba(255,220,120,.24), transparent 70%);
+      opacity:0;
+      filter:blur(8px);
+      transition:opacity .22s ease, transform .22s ease;
+      z-index:-1;
+    }
+
+    .hotspot:active,
+    .hotspot.active{
+      transform:translateY(-2px) scale(1.026);
+      filter:drop-shadow(0 10px 16px rgba(0,0,0,.22));
+    }
+
+    .hotspot:active::before,
+    .hotspot.active::before{
+      opacity:.26;
+    }
+
+    .hotspot:active::after,
+    .hotspot.active::after{
+      opacity:1;
+      transform:scale(1.02);
+    }
+
+    /* léger hover seulement sur desktop */
+    @media (hover:hover) and (pointer:fine){
+      .hotspot:hover{
+        transform:translateY(-3px) scale(1.03);
+        filter:drop-shadow(0 14px 18px rgba(0,0,0,.24));
+      }
+      .hotspot:hover::before{ opacity:.28; }
+      .hotspot:hover::after{
+        opacity:1;
+        transform:scale(1.03);
+      }
+    }
+
+    /* =========================
+       MODAL
+    ========================= */
+    .modal{
+      position:fixed;
+      inset:0;
+      z-index:50;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding:
+        calc(10px + var(--safe-top))
+        calc(12px + var(--safe-right))
+        calc(12px + var(--safe-bottom))
+        calc(12px + var(--safe-left));
+      background:rgba(10,8,16,.42);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transition:opacity .24s ease, visibility .24s ease;
+    }
+
+    .modal.open{
+      opacity:1;
+      visibility:visible;
+      pointer-events:auto;
+    }
+
+    .modal-card{
+      position:relative;
+      width:min(100%, 470px);
+      border-radius:26px;
+      padding:18px 16px 16px;
+      background:linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,.11));
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:var(--shadow-strong);
+      transform:translateY(16px) scale(.98);
+      transition:transform .26s ease;
+      overflow:hidden;
+    }
+
+    .modal.open .modal-card{
+      transform:translateY(0) scale(1);
+    }
+
+    .modal-card::before{
+      content:"";
+      position:absolute;
+      width:170px;
+      height:170px;
+      top:-54px;
+      right:-36px;
+      background:radial-gradient(circle, rgba(255,214,95,.22), transparent 68%);
+      filter:blur(14px);
+      pointer-events:none;
+    }
+
+    .modal-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      position:relative;
+      z-index:1;
+    }
+
+    .modal-title{
+      margin:0;
+      font-size:1.26rem;
+      font-weight:900;
+      line-height:1.12;
+      letter-spacing:.01em;
+    }
+
+    .modal-price{
+      padding:9px 12px;
+      border-radius:999px;
+      white-space:nowrap;
+      font-size:.98rem;
+      font-weight:900;
+      color:#fff1ad;
+      background:rgba(255,215,110,.13);
+      border:1px solid rgba(255,215,110,.34);
+      box-shadow:0 10px 22px rgba(0,0,0,.12);
+    }
+
+    .modal-desc{
+      position:relative;
+      z-index:1;
+      margin:12px 0 0;
+      color:var(--muted);
+      line-height:1.56;
+      font-size:1rem;
+    }
+
+    .modal-actions{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1fr 52px;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius:18px;
+      min-height:52px;
+      transition:transform .16s ease, opacity .16s ease, box-shadow .16s ease;
+    }
+
+    .btn:active{
+      transform:scale(.985);
+    }
+
+    .btn-primary{
+      color:#2d1900;
+      font-weight:900;
+      font-size:1rem;
+      background:linear-gradient(135deg, #ffe082, #ffca28);
+      box-shadow:0 12px 24px rgba(255,193,7,.24);
+    }
+
+    .btn-ghost{
+      color:#fff;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      font-size:1.15rem;
+      font-weight:800;
+    }
+
+    /* =========================
+       BOTTOM BAR MOBILE FIRST
+    ========================= */
+    .bottom-ui{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:40;
+      padding:
+        0 calc(10px + var(--safe-right))
+        calc(10px + var(--safe-bottom))
+        calc(10px + var(--safe-left));
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      pointer-events:none;
+    }
+
+    .cart,
+    .wa{
+      pointer-events:auto;
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      box-shadow:var(--shadow);
+    }
+
+    .cart{
+      min-height:var(--cart-h);
+      border-radius:22px;
+      padding:12px 12px 10px;
+      background:linear-gradient(180deg, rgba(255,255,255,.17), rgba(255,255,255,.10));
+      border:1px solid var(--border);
+    }
+
+    .cart-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .cart-label{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      font-size:.97rem;
+      font-weight:900;
+    }
+
+    .cart-count{
+      min-width:28px;
+      height:28px;
+      padding:0 8px;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg, #ffe082, #ffca28);
+      color:#2f1a00;
+      box-shadow:0 10px 18px rgba(255,193,7,.25);
+      font-size:.92rem;
+      font-weight:900;
+    }
+
+    .cart-items{
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      padding-bottom:2px;
+      scrollbar-width:none;
+    }
+
+    .cart-items::-webkit-scrollbar{
+      display:none;
+    }
+
+    .cart-item,
+    .cart-empty{
+      white-space:nowrap;
+      border-radius:999px;
+      font-size:.88rem;
+      line-height:1;
+    }
+
+    .cart-item{
+      padding:9px 11px;
+      background:rgba(255,255,255,.11);
+      border:1px solid rgba(255,255,255,.10);
+      color:#fff;
+      flex:0 0 auto;
+    }
+
+    .cart-empty{
+      padding:8px 0;
+      color:rgba(255,255,255,.74);
+    }
+
+    .wa{
+      min-height:var(--wa-h);
+      border:none;
+      cursor:pointer;
+      border-radius:20px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:0 16px;
+      background:linear-gradient(135deg, rgba(37,211,102,.96), rgba(17,122,68,.94));
+      color:#fff;
+      font-weight:900;
+      font-size:1rem;
+      letter-spacing:.01em;
+      text-align:center;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+
+    .wa:active{
+      transform:scale(.99);
+    }
+
+    .wa small{
+      display:block;
+      font-size:.77rem;
+      font-weight:700;
+      opacity:.94;
+      margin-top:2px;
+      letter-spacing:0;
+    }
+
+    /* =========================
+       TABLET / DESKTOP
+    ========================= */
+    @media (min-width: 768px){
+      :root{
+        --cart-h:96px;
+        --wa-h:84px;
+      }
+
+      .intro-card{
+        width:min(92vw, 720px);
+        padding:24px 22px 20px;
+      }
+
+      .runway{
+        height:118px;
+      }
+
+      .bottom-ui{
+        flex-direction:row;
+        align-items:flex-end;
+        gap:10px;
+        padding:
+          0 calc(12px + var(--safe-right))
+          calc(12px + var(--safe-bottom))
+          calc(12px + var(--safe-left));
+      }
+
+      .cart{
+        flex:1;
+        min-height:90px;
+        padding:14px 16px 12px;
+      }
+
+      .wa{
+        width:min(320px, 34vw);
+        min-height:84px;
+      }
+
+      .modal{
+        align-items:center;
+      }
+
+      .modal-card{
+        padding:20px 18px 18px;
+      }
+
+      .modal-title{
+        font-size:1.42rem;
+      }
+
+      .modal-desc{
+        font-size:1rem;
+      }
+
+      .hotspot{
+        border-radius:22px;
+      }
+    }
+
+    @media (min-width: 1080px){
+      :root{
+        --cart-h:92px;
+      }
+
+      .bottom-ui{
+        padding:
+          0 calc(14px + var(--safe-right))
+          calc(14px + var(--safe-bottom))
+          calc(14px + var(--safe-left));
+      }
+
+      .cart{
+        max-width:none;
+      }
+
+      .wa{
+        width:340px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-<div class="container">
+  <!-- INTRO -->
+  <div class="intro" id="intro">
+    <div class="intro-card">
+      <h1 class="intro-title">Bienvenue chez Yamani Food</h1>
+      <div class="intro-sub">Préparation de votre menu interactif…</div>
 
-<h1>🍽️ RIZ HADRAMI</h1>
-<div class="subtitle">طبخ حضرمي منزلي<br><small>Cuisine yéménite maison</small></div>
+      <div class="runway" aria-hidden="true">
+        <div class="chef">
+          <div class="emoji">👨‍🍳</div>
+          <div class="steam">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
 
-<div class="chef">
-  <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092">
-  <div>
-    <strong>👨‍🍳 طبخ منزلي – جودة عائلية</strong><br>
-    <small>Fait maison – Qualité familiale</small>
+      <div class="loading" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="hours">
-⏰ الطلبات: 10:00 – 18:00<br>
-<small>Commandes : 10:00 – 18:00</small><br>
-🚫 خارج الوقت لا يتم الرد<br>
-<small>Hors horaires : pas de réponse</small>
-</div>
+  <!-- APP -->
+  <main class="app" id="app">
+    <section class="stage">
+      <div class="menu-bg" aria-label="Menu Yamani Food"></div>
+      <div class="menu-safe-fade" aria-hidden="true"></div>
 
-<div class="note">⏳ الطلبات حسب توفر الكمية</div>
+      <!-- cadre exact de l'image affichée -->
+      <div class="image-frame" id="imageFrame">
+        <!-- Plats -->
+        <button
+          class="hotspot"
+          data-id="zerbian-simple"
+          aria-label="Zerbian Simple"
+          style="left:3.2%; top:18.9%; width:46.2%; height:21.6%;"
+        ></button>
 
-<div class="note" style="background:#ffeaea;border:1px solid #ffb3b3;">
-⏱️ <strong>ملاحظات مهمة قبل الطلب</strong><br><br>
+        <button
+          class="hotspot"
+          data-id="zerbian-max"
+          aria-label="Zerbian Max"
+          style="left:50.5%; top:18.9%; width:46.2%; height:21.6%;"
+        ></button>
 
-🍲 الطبخ منزلي ويُحضَّر بعد تأكيد الطلب.<br>
-⏳ مدة التحضير تقريبًا <strong>3 ساعات</strong>.<br>
-🙏 يرجى أخذ ذلك بعين الاعتبار قبل إرسال الطلب.<br><br>
+        <button
+          class="hotspot"
+          data-id="box-simple"
+          aria-label="Box Simple"
+          style="left:3.0%; top:41.0%; width:46.8%; height:26.8%;"
+        ></button>
 
-<small>
-Cuisine faite maison – préparation après confirmation.<br>
-Temps de préparation : environ <strong>3 heures</strong>.<br>
-Merci de votre compréhension 🤍
-</small>
-</div>
+        <button
+          class="hotspot"
+          data-id="box-max"
+          aria-label="Box Max"
+          style="left:50.2%; top:41.0%; width:46.8%; height:26.8%;"
+        ></button>
 
-    
+        <!-- Sauces -->
+        <button
+          class="hotspot"
+          data-id="daqoos"
+          aria-label="Daqoos"
+          style="left:6.3%; top:72.0%; width:26.2%; height:12.4%; border-radius:24px;"
+        ></button>
 
-<div class="menu">
-<div class="item">
-<img src="https://images.unsplash.com/photo-1600628422019-1f6c4e7a6f4a">
-<div class="item-content">
-<div class="item-title">🍗 صانه دجاج</div>
-<div class="item-fr">Plateau de poulet</div>
-<div class="price">€12</div>
-<div class="counter" data-fr="Plateau de poulet" data-price="12">
-<button onclick="qty(this,-1)">−</button><span>0</span><button onclick="qty(this,1)">+</button>
-</div>
-</div>
-</div>
+        <button
+          class="hotspot"
+          data-id="labneh"
+          aria-label="Labneh"
+          style="left:36.8%; top:72.0%; width:26.2%; height:12.4%; border-radius:24px;"
+        ></button>
 
-<div class="item">
-<img src="https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56">
-<div class="item-content">
-<div class="item-title">🥩 صانه لحم</div>
-<div class="item-fr">Plateau de viande</div>
-<div class="price">€15</div>
-<div class="counter" data-fr="Plateau de viande" data-price="15">
-<button onclick="qty(this,-1)">−</button><span>0</span><button onclick="qty(this,1)">+</button>
-</div>
-</div>
-</div>
-</div>
+        <button
+          class="hotspot"
+          data-id="sahawiq"
+          aria-label="Sahawiq"
+          style="left:67.0%; top:72.0%; width:24.8%; height:12.4%; border-radius:24px;"
+        ></button>
+      </div>
+    </section>
+  </main>
 
-<div class="section">
-<h3>👤 Nom</h3>
-<input id="customerName">
-</div>
+  <!-- MODAL -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <h2 class="modal-title" id="modalTitle">Nom du plat</h2>
+        <div class="modal-price" id="modalPrice">0,00 €</div>
+      </div>
 
-<div class="section">
-<h3>🚚 Livraison</h3>
-<div class="delivery">
-<div onclick="setDelivery(this,'Livraison')">🚚 Livraison</div>
-<div onclick="setDelivery(this,'À emporter')">🏠 À emporter</div>
-</div>
-<div class="address-inputs" id="addressBox" style="display:none">
-  <input id="street" placeholder="Rue et numéro">
-  <input id="zip" placeholder="Code postal">
-  <input id="city" placeholder="Ville">
-</div>
-</div>
+      <p class="modal-desc" id="modalDesc">
+        Description courte du plat.
+      </p>
 
-<div class="section">
-<h3>📅 Jour</h3>
-<div class="day-pick">
-<button id="btnToday" class="active" onclick="setDay('today')">Aujourd’hui</button>
-<button id="btnSpecific" onclick="setDay('specific')">Date précise</button>
-</div>
-<input type="date" id="orderDate" style="display:none">
-</div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="addToCartBtn">Ajouter au panier</button>
+        <button class="btn btn-ghost" id="closeModalBtn" aria-label="Fermer">✕</button>
+      </div>
+    </div>
+  </div>
 
-<div class="section">
-<h3>⏰ Heure</h3>
-<input type="time" id="time">
-</div>
+  <!-- BOTTOM UI -->
+  <div class="bottom-ui">
+    <div class="cart">
+      <div class="cart-top">
+        <div class="cart-label">
+          <span>🛒 Panier</span>
+        </div>
+        <div class="cart-count" id="cartCount">0</div>
+      </div>
 
-<div class="section">
-<h3>📝 Note</h3>
-<textarea id="customerNote"></textarea>
-</div>
+      <div class="cart-items" id="cartItems">
+        <div class="cart-empty">Aucun article sélectionné.</div>
+      </div>
+    </div>
 
-<div class="section summary" id="summary">—</div>
+    <button class="wa" id="whatsappBtn" type="button">
+      <span style="font-size:1.2rem">💬</span>
+      <span>
+        Commander via WhatsApp
+        <small>Envoyer votre commande complète</small>
+      </span>
+    </button>
+  </div>
 
-<button class="order-btn" onclick="confirmSend()">Envoyer sur WhatsApp</button>
+  <script>
+    const DISHES = {
+      "zerbian-simple": {
+        name: "Zerbian Simple",
+        price: "4,99 €",
+        description: "Riz zerbian parfumé avec des morceaux de poulet tendres, dans un format simple, savoureux et généreux."
+      },
+      "zerbian-max": {
+        name: "Zerbian Max",
+        price: "6,99 €",
+        description: "Une portion plus copieuse de zerbian avec davantage de poulet et une saveur encore plus intense."
+      },
+      "box-simple": {
+        name: "Box Simple",
+        price: "7,99 €",
+        description: "Une formule complète avec zerbian, boisson et dessert, idéale pour un repas gourmand et équilibré."
+      },
+      "box-max": {
+        name: "Box Max",
+        price: "9,99 €",
+        description: "La formule la plus généreuse avec zerbian, boisson et dessert, parfaite pour les grandes faims."
+      },
+      "daqoos": {
+        name: "Daqoos",
+        price: "1,00 €",
+        description: "Sauce yéménite relevée à base de tomate et de piment, parfaite pour donner plus de caractère au plat."
+      },
+      "labneh": {
+        name: "Labneh",
+        price: "1,00 €",
+        description: "Crème onctueuse au yaourt, douce et fraîche, idéale pour une touche légère et équilibrée."
+      },
+      "sahawiq": {
+        name: "Sahawiq",
+        price: "1,00 €",
+        description: "Sauce verte épicée aux herbes fraîches, à l’ail et au piment, intense et pleine de fraîcheur."
+      }
+    };
 
-</div>
+    const intro = document.getElementById("intro");
+    const app = document.getElementById("app");
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalPrice = document.getElementById("modalPrice");
+    const modalDesc = document.getElementById("modalDesc");
+    const addToCartBtn = document.getElementById("addToCartBtn");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const cartCount = document.getElementById("cartCount");
+    const cartItems = document.getElementById("cartItems");
+    const whatsappBtn = document.getElementById("whatsappBtn");
+    const hotspots = document.querySelectorAll(".hotspot");
 
-<div class="total-bar" id="totalBar">💰 Total : €0</div>
+    let selectedDish = null;
+    const cart = {};
 
-<script>
-let orderDayType="today", deliveryMode="";
+    // Intro
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        intro.classList.add("hide");
+        app.classList.add("ready");
+      }, 2550);
+    });
 
-function qty(btn,d){
- let s=btn.parentElement.querySelector("span");
- s.textContent=Math.max(0,parseInt(s.textContent)+d);
- update();
-}
+    // Modal
+    function openModal(id, triggerEl){
+      const item = DISHES[id];
+      if (!item) return;
 
-function setDelivery(el,mode){
- deliveryMode=mode;
- 
- document.querySelectorAll(".delivery div").forEach(d=>d.classList.remove("active"));
- el.classList.add("active");
- 
- // ✅ إظهار / إخفاء العنوان
- if(mode === "Livraison"){
-   addressBox.style.display = "block";
- }else{
-   addressBox.style.display = "none";
- }
- 
- update();
-}
+      selectedDish = id;
+      hotspots.forEach(el => el.classList.remove("active"));
+      if (triggerEl) triggerEl.classList.add("active");
 
-function setDay(type){
- orderDayType=type;
- btnToday.classList.remove("active");
- btnSpecific.classList.remove("active");
- if(type==="today"){
-  btnToday.classList.add("active");
-  orderDate.style.display="none"; 
-  orderDate.value="";
- }else{
-  btnSpecific.classList.add("active");
-  orderDate.style.display="block";
- }
- update();
-}
+      modalTitle.textContent = item.name;
+      modalPrice.textContent = item.price;
+      modalDesc.textContent = item.description;
 
-function update(){
- let html="", total=0;
- 
- // حساب المنتجات والسعر
- document.querySelectorAll(".counter").forEach(c=>{
-  let q=parseInt(c.querySelector("span").textContent);
-  if(q>0){
-    total+=q*parseInt(c.dataset.price);
-    html+=`• ${c.dataset.fr} × ${q}<br>`;
-  }
- });
- 
- // تحديث الشريط السفلي
- totalBar.innerHTML=`💰 Total : €${total}`;
- 
- // إذا لم تكن هناك منتجات
- if(!html){
-  summary.innerHTML="—";
-  return;
- }
- 
- html+=`<hr>`;
- 
- // طريقة التوصيل
- html+=`Mode : ${deliveryMode || "-"}<br>`;
- 
- // العنوان (إذا كان توصيل)
- if(deliveryMode === "Livraison"){
-   let addressText = "";
-   if(street.value) addressText += street.value + " ";
-   if(zip.value) addressText += zip.value + " ";
-   if(city.value) addressText += city.value;
-   
-   if(addressText.trim()){
-     html+=`📍 Adresse : ${addressText.trim()}<br>`;
-   }
- }
- 
- // التاريخ
- if(orderDayType === "today"){
-   html+=`📅 Aujourd’hui<br>`;
- }else if(orderDayType === "specific" && orderDate.value){
-   html+=`📅 ${orderDate.value}<br>`;
- }
- 
- // الوقت
- if(time.value){
-   html+=`⏰ ${time.value}<br>`;
- }
- 
- // الملاحظة
- if(customerNote.value.trim()){
-   html+=`📝 ${customerNote.value.trim()}<br>`;
- }
- 
- // المجموع
- html+=`<strong>Total : €${total}</strong>`;
- summary.innerHTML=html;
-}
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+    }
 
-function confirmSend(){
- if(confirm("Envoyer la commande sur WhatsApp ?")) send();
-}
-function isMobile(){
-  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-}
+    function closeModal(){
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      hotspots.forEach(el => el.classList.remove("active"));
+    }
 
-function send(){
- let msg = isMobile()
-  ? "Bonjour 🌿\n\n"
-  : "Bonjour\n\n";
+    hotspots.forEach(btn => {
+      btn.addEventListener("click", () => openModal(btn.dataset.id, btn));
 
- msg+="Je souhaite passer une commande chez RIZ HADRAMI.\n\n";
- 
- // الاسم
- if(customerName.value.trim()){
-   msg+=`👤 Nom : ${customerName.value.trim()}\n\n`;
- }
- 
- // الطلب
- let hasProducts=false;
- msg+="🍽️ Commande :\n";
- document.querySelectorAll(".counter").forEach(c=>{
-  let q=parseInt(c.querySelector("span").textContent);
-  if(q>0){
-    hasProducts=true;
-    msg+=`- ${c.dataset.fr} × ${q}\n`;
-  }
- });
- 
- if(!hasProducts){
-   alert("Veuillez ajouter au moins un produit.");
-   return;
- }
- 
- msg+="\n";
- 
- // التوصيل
- msg+=`🚚 Mode : ${deliveryMode || "-"}\n`;
- 
- if(deliveryMode === "Livraison"){
-   let addressText = "";
-   if(street.value) addressText += street.value + " ";
-   if(zip.value) addressText += zip.value + " ";
-   if(city.value) addressText += city.value;
-   
-   if(addressText.trim()){
-     msg+=`📍 Adresse : ${addressText.trim()}\n`;
-   }
- }
- 
- // اليوم
- if(orderDayType === "today"){
-   msg+=`📅 Jour : Aujourd’hui\n`;
- }else if(orderDayType === "specific" && orderDate.value){
-   msg+=`📅 Jour : ${orderDate.value}\n`;
- }
- 
- // الوقت
- if(time.value){
-   msg+=`⏰ Heure souhaitée : ${time.value}\n`;
- }
- 
- // الملاحظة
- if(customerNote.value.trim()){
-   msg+=`\n📝 Remarque :\n${customerNote.value.trim()}\n`;
- }
- 
- // ملاحظة التحضير (بأسلوب عميل)
- msg+=`\n⏳ J’ai bien noté que le temps de préparation est d’environ 3 heures.\n`;
- 
- // المجموع
- let total=0;
- document.querySelectorAll(".counter").forEach(c=>{
-  let q=parseInt(c.querySelector("span").textContent);
-  if(q>0){
-    total+=q*parseInt(c.dataset.price);
-  }
- });
- 
- msg+=`\n💰 Total estimé : €${total}\n\nMerci beaucoup 🤍`;
- 
- // واتساب
- location.href="https://wa.me/33782549043?text="+encodeURIComponent(msg);
-}
+      // meilleur feedback tactile sur mobile
+      btn.addEventListener("touchstart", () => {
+        btn.classList.add("active");
+      }, { passive: true });
 
+      btn.addEventListener("touchend", () => {
+        setTimeout(() => btn.classList.remove("active"), 120);
+      }, { passive: true });
+    });
 
-// تحديث عند تغيير أي حقل
-customerName.addEventListener('input', update);
-street.addEventListener('input', update);
-zip.addEventListener('input', update);
-city.addEventListener('input', update);
-orderDate.addEventListener('input', update);
-time.addEventListener('input', update);
-customerNote.addEventListener('input', update);
+    closeModalBtn.addEventListener("click", closeModal);
 
-// تعيين التاريخ الافتراضي لحقل التاريخ
-orderDate.min = new Date().toISOString().split("T")[0];
-</script>
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
 
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+
+    // Panier
+    function renderCart(){
+      const entries = Object.entries(cart);
+      const total = entries.reduce((sum, [, qty]) => sum + qty, 0);
+      cartCount.textContent = total;
+
+      if (!entries.length){
+        cartItems.innerHTML = '<div class="cart-empty">Aucun article sélectionné.</div>';
+        return;
+      }
+
+      cartItems.innerHTML = entries.map(([id, qty]) => {
+        const item = DISHES[id];
+        return `<div class="cart-item">${item.name} × ${qty}</div>`;
+      }).join("");
+    }
+
+    addToCartBtn.addEventListener("click", () => {
+      if (!selectedDish) return;
+      cart[selectedDish] = (cart[selectedDish] || 0) + 1;
+      renderCart();
+      pulseWhatsApp();
+      closeModal();
+    });
+
+    function pulseWhatsApp(){
+      whatsappBtn.animate(
+        [
+          { transform: "scale(1)" },
+          { transform: "scale(1.02)" },
+          { transform: "scale(1)" }
+        ],
+        { duration: 380, easing: "ease-out" }
+      );
+    }
+
+    // WhatsApp
+    whatsappBtn.addEventListener("click", () => {
+      const entries = Object.entries(cart);
+
+      if (!entries.length){
+        alert("Veuillez d’abord ajouter au moins un article au panier.");
+        return;
+      }
+
+      const lines = entries.map(([id, qty], index) => {
+        const item = DISHES[id];
+        return `${index + 1}. ${item.name} x${qty}`;
+      });
+
+      const message =
+`Bonjour Yamani Food,
+Je souhaite commander :
+
+${lines.join("\n")}
+
+Merci !`;
+
+      const phone = "33777263112";
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank");
+    });
+
+    renderCart();
+  </script>
 </body>
 </html>
