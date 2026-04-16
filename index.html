@@ -367,6 +367,9 @@
       will-change:transform;
       isolation:isolate;
       overflow:visible;
+      transform:translateZ(0);
+      backface-visibility:hidden;
+      -webkit-backface-visibility:hidden;
       --rx: 0deg;
       --ry: 0deg;
       --idle-lift: 0px;
@@ -380,18 +383,19 @@
     .hotspot::before{
       content:"";
       position:absolute;
-      inset:0;
+      inset:-2px;
       border-radius:var(--piece-radius);
       background-image:var(--menu-url);
       background-repeat:no-repeat;
-      background-size:var(--bg-w, 100% 100%);
-      background-position:var(--bg-x, center) var(--bg-y, top);
+      background-size:calc(var(--bg-wx, 100%) + 4px) calc(var(--bg-hy, 100%) + 4px);
+      background-position:calc(var(--bg-x, 0px) - 2px) calc(var(--bg-y, 0px) - 2px);
       transform:
         perspective(1100px)
         translate3d(0, var(--float-y), 0)
         rotateX(calc(var(--rx) * .45))
         rotateY(calc(var(--ry) * .55))
-        scale(var(--float-scale));
+        scale(var(--float-scale))
+        translateZ(0);
       transform-origin:center center;
       opacity:var(--piece-opacity);
       filter:var(--piece-shadow);
@@ -399,9 +403,11 @@
         transform .34s cubic-bezier(.2,.7,.2,1),
         filter .34s ease,
         opacity .24s ease;
-      will-change:transform;
+      will-change:transform, filter;
       z-index:1;
       pointer-events:none;
+      backface-visibility:hidden;
+      -webkit-backface-visibility:hidden;
       box-shadow:
         inset 0 0 0 1px rgba(255,255,255,.03);
     }
@@ -1208,6 +1214,8 @@
         const height = btn.offsetHeight;
 
         btn.style.setProperty("--bg-w", `${frameW}px ${frameH}px`);
+        btn.style.setProperty("--bg-wx", `${frameW}px`);
+        btn.style.setProperty("--bg-hy", `${frameH}px`);
         btn.style.setProperty("--bg-x", `${-left}px`);
         btn.style.setProperty("--bg-y", `${-top}px`);
 
