@@ -659,6 +659,8 @@
       transform:translateY(14px) scale(.985);
       transition:transform .24s ease;
       overflow:hidden;
+      max-height:min(86vh, 760px);
+      overflow-y:auto;
     }
 
     .modal.open .modal-card{
@@ -715,6 +717,210 @@
       font-size:.97rem;
     }
 
+    .modal-options{
+      position:relative;
+      z-index:1;
+      margin-top:14px;
+      display:grid;
+      gap:12px;
+    }
+
+    .option-group{
+      border-radius:18px;
+      padding:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:0 10px 20px rgba(0,0,0,.08);
+    }
+
+    .option-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:10px;
+    }
+
+    .option-title{
+      font-size:.96rem;
+      font-weight:900;
+      color:#fff;
+      line-height:1.2;
+    }
+
+    .option-badge{
+      flex:0 0 auto;
+      font-size:.72rem;
+      font-weight:900;
+      color:#2b1a00;
+      background:linear-gradient(135deg, #ffe082, #ffca28);
+      border-radius:999px;
+      padding:6px 9px;
+      box-shadow:0 8px 16px rgba(255,193,7,.18);
+    }
+
+    .option-note{
+      font-size:.78rem;
+      line-height:1.45;
+      color:rgba(255,255,255,.78);
+      margin:0 0 10px;
+    }
+
+    .choice-list{
+      display:grid;
+      gap:8px;
+    }
+
+    .choice-item{
+      position:relative;
+    }
+
+    .choice-input{
+      position:absolute;
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .choice-card{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      min-height:50px;
+      border-radius:15px;
+      padding:11px 12px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.10);
+      transition:transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+      cursor:pointer;
+    }
+
+    .choice-card:active{
+      transform:scale(.99);
+    }
+
+    .choice-main{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .choice-mark{
+      width:20px;
+      height:20px;
+      flex:0 0 20px;
+      border-radius:999px;
+      border:2px solid rgba(255,255,255,.35);
+      background:rgba(255,255,255,.04);
+      display:grid;
+      place-items:center;
+      transition:all .16s ease;
+    }
+
+    .choice-mark.checkbox{
+      border-radius:7px;
+    }
+
+    .choice-mark::after{
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:#ffcf4f;
+      transform:scale(0);
+      transition:transform .16s ease;
+      box-shadow:0 0 16px rgba(255,207,79,.45);
+    }
+
+    .choice-mark.checkbox::after{
+      width:9px;
+      height:9px;
+      border-radius:3px;
+    }
+
+    .choice-text{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+
+    .choice-name{
+      font-size:.94rem;
+      font-weight:800;
+      color:#fff;
+      line-height:1.2;
+    }
+
+    .choice-sub{
+      font-size:.76rem;
+      color:rgba(255,255,255,.68);
+      line-height:1.25;
+    }
+
+    .choice-price{
+      flex:0 0 auto;
+      font-size:.84rem;
+      font-weight:900;
+      color:#ffe59c;
+      white-space:nowrap;
+      padding-left:6px;
+    }
+
+    .choice-input:checked + .choice-card{
+      background:linear-gradient(180deg, rgba(255,214,95,.18), rgba(255,214,95,.10));
+      border-color:rgba(255,214,95,.38);
+      box-shadow:0 12px 24px rgba(255,193,7,.12);
+      transform:translateY(-1px);
+    }
+
+    .choice-input:checked + .choice-card .choice-mark{
+      border-color:#ffcf4f;
+      background:rgba(255,207,79,.16);
+      box-shadow:0 0 0 4px rgba(255,207,79,.08);
+    }
+
+    .choice-input:checked + .choice-card .choice-mark::after{
+      transform:scale(1);
+    }
+
+    .inline-summary{
+      margin-top:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .summary-pill{
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:.76rem;
+      font-weight:800;
+      line-height:1;
+      color:#fff;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+    }
+
+    .summary-pill.accent{
+      color:#2d1900;
+      background:linear-gradient(135deg, #ffe082, #ffca28);
+      border-color:rgba(255,214,95,.4);
+    }
+
+    .modal-inline-alert{
+      margin-top:2px;
+      font-size:.78rem;
+      color:#ffd7b0;
+      line-height:1.4;
+      display:none;
+    }
+
+    .modal-inline-alert.show{
+      display:block;
+    }
+
     .modal-actions{
       position:relative;
       z-index:1;
@@ -743,6 +949,12 @@
       font-size:.98rem;
       background:linear-gradient(135deg, #ffe082, #ffca28);
       box-shadow:0 12px 24px rgba(255,193,7,.22);
+    }
+
+    .btn-primary[disabled]{
+      opacity:.6;
+      cursor:not-allowed;
+      box-shadow:none;
     }
 
     .btn-ghost{
@@ -980,6 +1192,10 @@
       .mobile-side-blend{
         opacity:.42;
       }
+
+      .choice-list{
+        grid-template-columns:1fr 1fr;
+      }
     }
 
     @media (min-width: 1080px){
@@ -1108,6 +1324,9 @@
         Description courte du plat.
       </p>
 
+      <div class="modal-options" id="modalOptions"></div>
+      <div class="modal-inline-alert" id="modalAlert"></div>
+
       <div class="modal-actions">
         <button class="btn btn-primary" id="addToCartBtn">Ajouter au panier</button>
         <button class="btn btn-ghost" id="closeModalBtn" aria-label="Fermer">✕</button>
@@ -1144,39 +1363,66 @@
       "zerbian-simple": {
         name: "Zerbian Simple",
         price: "4,99 €",
-        description: "Riz zerbian parfumé avec des morceaux de poulet tendres, dans un format simple, savoureux et généreux."
+        description: "Riz zerbian parfumé avec des morceaux de poulet tendres, dans un format simple, savoureux et généreux.",
+        category: "single"
       },
       "zerbian-max": {
         name: "Zerbian Max",
         price: "6,99 €",
-        description: "Une portion plus copieuse de zerbian avec davantage de poulet et une saveur encore plus intense."
+        description: "Une portion plus copieuse de zerbian avec davantage de poulet et une saveur encore plus intense.",
+        category: "single"
       },
       "box-simple": {
         name: "Box Simple",
         price: "7,99 €",
-        description: "Une formule complète avec zerbian, boisson et dessert, idéale pour un repas gourmand et équilibré."
+        description: "Une formule complète avec zerbian, boisson et dessert, idéale pour un repas gourmand et équilibré.",
+        category: "box"
       },
       "box-max": {
         name: "Box Max",
         price: "9,99 €",
-        description: "La formule la plus généreuse avec zerbian, boisson et dessert, parfaite pour les grandes faims."
+        description: "La formule la plus généreuse avec zerbian, boisson et dessert, parfaite pour les grandes faims.",
+        category: "box"
       },
       "daqoos": {
         name: "Daqoos",
         price: "1,00 €",
-        description: "Sauce yéménite relevée à base de tomate et de piment, parfaite pour donner plus de caractère au plat."
+        description: "Sauce yéménite relevée à base de tomate et de piment, parfaite pour donner plus de caractère au plat.",
+        category: "sauce-single"
       },
       "labneh": {
         name: "Labneh",
         price: "1,00 €",
-        description: "Crème onctueuse au yaourt, douce et fraîche, idéale pour une touche légère et équilibrée."
+        description: "Crème onctueuse au yaourt, douce et fraîche, idéale pour une touche légère et équilibrée.",
+        category: "sauce-single"
       },
       "sahawiq": {
         name: "Sahawiq",
         price: "1,00 €",
-        description: "Sauce verte épicée aux herbes fraîches, à l’ail et au piment, intense et pleine de fraîcheur."
+        description: "Sauce verte épicée aux herbes fraîches, à l’ail et au piment, intense et pleine de fraîcheur.",
+        category: "sauce-single"
       }
     };
+
+    const OPTIONAL_DRINK_EXTRA = 1.00; // عدل سعر المشروب الإضافي هنا إذا أردت
+    const EXTRA_SAUCE_PRICE = 0.50;
+
+    const DRINKS = [
+      { id: "cola", name: "Cola" },
+      { id: "cola-zero", name: "Cola Zero" },
+      { id: "ice-tea", name: "Ice Tea" },
+      { id: "oasis", name: "Oasis" }
+    ];
+
+    const DESSERTS = [
+      { id: "basbousa", name: "Basbousa" }
+    ];
+
+    const SAUCES = [
+      { id: "daqoos", name: "Daqoos" },
+      { id: "labneh", name: "Labneh" },
+      { id: "sahawiq", name: "Sahawiq" }
+    ];
 
     const intro = document.getElementById("intro");
     const app = document.getElementById("app");
@@ -1184,6 +1430,8 @@
     const modalTitle = document.getElementById("modalTitle");
     const modalPrice = document.getElementById("modalPrice");
     const modalDesc = document.getElementById("modalDesc");
+    const modalOptions = document.getElementById("modalOptions");
+    const modalAlert = document.getElementById("modalAlert");
     const addToCartBtn = document.getElementById("addToCartBtn");
     const closeModalBtn = document.getElementById("closeModalBtn");
     const cartCount = document.getElementById("cartCount");
@@ -1193,6 +1441,7 @@
     const hotspots = document.querySelectorAll(".hotspot");
 
     let selectedDish = null;
+    let selectedConfig = null;
     const cart = {};
 
     function setAppHeight(){
@@ -1248,6 +1497,377 @@
       btn.style.setProperty("--ry", `${ry}deg`);
     }
 
+    function parseEuro(value){
+      return Number(
+        String(value)
+          .replace(/[^\d,.-]/g, "")
+          .replace(",", ".")
+      ) || 0;
+    }
+
+    function formatEuro(value){
+      return `${value.toFixed(2).replace(".", ",")} €`;
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, ch => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+      }[ch]));
+    }
+
+    function getDishCategory(id){
+      return DISHES[id]?.category || "";
+    }
+
+    function getDefaultConfig(id){
+      const category = getDishCategory(id);
+
+      if (category === "single"){
+        return {
+          drink: "",
+          dessert: "",
+          sauces: []
+        };
+      }
+
+      if (category === "box"){
+        return {
+          drink: DRINKS[0].id,
+          dessert: DESSERTS[0].id,
+          sauces: [SAUCES[0].id]
+        };
+      }
+
+      return {
+        drink: "",
+        dessert: "",
+        sauces: []
+      };
+    }
+
+    function getDrinkById(id){
+      return DRINKS.find(item => item.id === id) || null;
+    }
+
+    function getDessertById(id){
+      return DESSERTS.find(item => item.id === id) || null;
+    }
+
+    function getSauceById(id){
+      return SAUCES.find(item => item.id === id) || null;
+    }
+
+    function renderDrinkOptions(required = false, selected = ""){
+      const noneOption = required ? "" : `
+        <label class="choice-item">
+          <input class="choice-input" type="radio" name="drinkChoice" value="" ${selected === "" ? "checked" : ""}>
+          <div class="choice-card">
+            <div class="choice-main">
+              <div class="choice-mark"></div>
+              <div class="choice-text">
+                <div class="choice-name">Sans boisson</div>
+                <div class="choice-sub">Vous pouvez continuer sans choisir</div>
+              </div>
+            </div>
+            <div class="choice-price">+0,00 €</div>
+          </div>
+        </label>
+      `;
+
+      const items = DRINKS.map(drink => {
+        const priceText = required ? "Inclus" : `+${formatEuro(OPTIONAL_DRINK_EXTRA)}`;
+        const subText = required
+          ? "Choix obligatoire pour la box"
+          : "Option supplémentaire";
+
+        return `
+          <label class="choice-item">
+            <input class="choice-input" type="radio" name="drinkChoice" value="${drink.id}" ${selected === drink.id ? "checked" : ""}>
+            <div class="choice-card">
+              <div class="choice-main">
+                <div class="choice-mark"></div>
+                <div class="choice-text">
+                  <div class="choice-name">${escapeHtml(drink.name)}</div>
+                  <div class="choice-sub">${subText}</div>
+                </div>
+              </div>
+              <div class="choice-price">${priceText}</div>
+            </div>
+          </label>
+        `;
+      }).join("");
+
+      return `
+        <div class="option-group">
+          <div class="option-head">
+            <div class="option-title">Boisson</div>
+            <div class="option-badge">${required ? "Obligatoire" : "Option"}</div>
+          </div>
+          <p class="option-note">
+            ${required
+              ? "Choisissez une seule boisson pour votre box."
+              : "Vous pouvez ajouter une boisson, ou passer cette étape."}
+          </p>
+          <div class="choice-list">
+            ${noneOption}
+            ${items}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDessertOptions(selected = ""){
+      return `
+        <div class="option-group">
+          <div class="option-head">
+            <div class="option-title">Dessert</div>
+            <div class="option-badge">Inclus</div>
+          </div>
+          <p class="option-note">
+            Le dessert est obligatoire pour la box, sans coût supplémentaire.
+          </p>
+          <div class="choice-list">
+            ${DESSERTS.map(dessert => `
+              <label class="choice-item">
+                <input class="choice-input" type="radio" name="dessertChoice" value="${dessert.id}" ${selected === dessert.id ? "checked" : ""}>
+                <div class="choice-card">
+                  <div class="choice-main">
+                    <div class="choice-mark"></div>
+                    <div class="choice-text">
+                      <div class="choice-name">${escapeHtml(dessert.name)}</div>
+                      <div class="choice-sub">Dessert inclus dans la box</div>
+                    </div>
+                  </div>
+                  <div class="choice-price">Inclus</div>
+                </div>
+              </label>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSauceOptions(selectedSauces = []){
+      return `
+        <div class="option-group">
+          <div class="option-head">
+            <div class="option-title">Sauces</div>
+            <div class="option-badge">1 incluse</div>
+          </div>
+          <p class="option-note">
+            Une sauce est incluse gratuitement. Chaque sauce supplémentaire coûte +${formatEuro(EXTRA_SAUCE_PRICE)}.
+          </p>
+          <div class="choice-list">
+            ${SAUCES.map(sauce => `
+              <label class="choice-item">
+                <input class="choice-input" type="checkbox" name="sauceChoice" value="${sauce.id}" ${selectedSauces.includes(sauce.id) ? "checked" : ""}>
+                <div class="choice-card">
+                  <div class="choice-main">
+                    <div class="choice-mark checkbox"></div>
+                    <div class="choice-text">
+                      <div class="choice-name">${escapeHtml(sauce.name)}</div>
+                      <div class="choice-sub">Première sauce incluse, extras payants</div>
+                    </div>
+                  </div>
+                  <div class="choice-price">+0 / +0,50 €</div>
+                </div>
+              </label>
+            `).join("")}
+          </div>
+          <div class="inline-summary" id="sauceSummary"></div>
+        </div>
+      `;
+    }
+
+    function renderModalOptions(id){
+      const category = getDishCategory(id);
+      const config = selectedConfig || getDefaultConfig(id);
+
+      if (category === "single"){
+        modalOptions.innerHTML = renderDrinkOptions(false, config.drink);
+        return;
+      }
+
+      if (category === "box"){
+        modalOptions.innerHTML = `
+          ${renderDrinkOptions(true, config.drink)}
+          ${renderDessertOptions(config.dessert)}
+          ${renderSauceOptions(config.sauces)}
+        `;
+        renderSauceSummary(config.sauces);
+        return;
+      }
+
+      modalOptions.innerHTML = "";
+    }
+
+    function readConfigFromModal(id){
+      const category = getDishCategory(id);
+      const config = getDefaultConfig(id);
+
+      if (category === "single"){
+        const drinkEl = modal.querySelector('input[name="drinkChoice"]:checked');
+        config.drink = drinkEl ? drinkEl.value : "";
+        return config;
+      }
+
+      if (category === "box"){
+        const drinkEl = modal.querySelector('input[name="drinkChoice"]:checked');
+        const dessertEl = modal.querySelector('input[name="dessertChoice"]:checked');
+        const sauceEls = [...modal.querySelectorAll('input[name="sauceChoice"]:checked')];
+
+        config.drink = drinkEl ? drinkEl.value : "";
+        config.dessert = dessertEl ? dessertEl.value : "";
+        config.sauces = sauceEls.map(el => el.value);
+
+        return config;
+      }
+
+      return config;
+    }
+
+    function getExtrasTotal(id, config){
+      const category = getDishCategory(id);
+      let extras = 0;
+
+      if (category === "single" && config.drink){
+        extras += OPTIONAL_DRINK_EXTRA;
+      }
+
+      if (category === "box"){
+        const extraSauceCount = Math.max((config.sauces || []).length - 1, 0);
+        extras += extraSauceCount * EXTRA_SAUCE_PRICE;
+      }
+
+      return extras;
+    }
+
+    function getItemTotal(id, config){
+      const base = parseEuro(DISHES[id].price);
+      return base + getExtrasTotal(id, config);
+    }
+
+    function isModalSelectionValid(id, config){
+      const category = getDishCategory(id);
+
+      if (category === "single"){
+        return true;
+      }
+
+      if (category === "box"){
+        return Boolean(config.drink) && Boolean(config.dessert) && Array.isArray(config.sauces) && config.sauces.length > 0;
+      }
+
+      return true;
+    }
+
+    function updateModalState(){
+      if (!selectedDish) return;
+
+      selectedConfig = readConfigFromModal(selectedDish);
+      const item = DISHES[selectedDish];
+      const total = getItemTotal(selectedDish, selectedConfig);
+
+      modalPrice.textContent = formatEuro(total);
+      addToCartBtn.textContent = `Ajouter au panier • ${formatEuro(total)}`;
+
+      const isValid = isModalSelectionValid(selectedDish, selectedConfig);
+      addToCartBtn.disabled = !isValid;
+
+      if (!isValid && getDishCategory(selectedDish) === "box"){
+        modalAlert.textContent = "Veuillez choisir une boisson, un dessert et au moins une sauce pour continuer.";
+        modalAlert.classList.add("show");
+      } else {
+        modalAlert.textContent = "";
+        modalAlert.classList.remove("show");
+      }
+
+      if (getDishCategory(selectedDish) === "box"){
+        renderSauceSummary(selectedConfig.sauces);
+      }
+    }
+
+    function renderSauceSummary(sauces = []){
+      const summary = document.getElementById("sauceSummary");
+      if (!summary) return;
+
+      if (!sauces.length){
+        summary.innerHTML = `<div class="summary-pill">Aucune sauce choisie</div>`;
+        return;
+      }
+
+      const extraCount = Math.max(sauces.length - 1, 0);
+      const extraPrice = extraCount * EXTRA_SAUCE_PRICE;
+      const names = sauces
+        .map(id => getSauceById(id)?.name)
+        .filter(Boolean);
+
+      summary.innerHTML = `
+        ${names.map(name => `<div class="summary-pill">${escapeHtml(name)}</div>`).join("")}
+        <div class="summary-pill accent">
+          Supplément sauces: ${extraPrice > 0 ? "+" + formatEuro(extraPrice) : "Inclus"}
+        </div>
+      `;
+    }
+
+    function buildSelectionLabel(id, config){
+      const category = getDishCategory(id);
+      const parts = [];
+
+      if (category === "single"){
+        if (config.drink){
+          const drink = getDrinkById(config.drink);
+          if (drink) parts.push(`Boisson: ${drink.name}`);
+        }
+      }
+
+      if (category === "box"){
+        const drink = getDrinkById(config.drink);
+        const dessert = getDessertById(config.dessert);
+
+        if (drink) parts.push(`Boisson: ${drink.name}`);
+        if (dessert) parts.push(`Dessert: ${dessert.name}`);
+
+        if (config.sauces?.length){
+          const sauceNames = config.sauces
+            .map(sauceId => getSauceById(sauceId)?.name)
+            .filter(Boolean)
+            .join(", ");
+          if (sauceNames) parts.push(`Sauces: ${sauceNames}`);
+        }
+
+        const extraSauceCount = Math.max((config.sauces || []).length - 1, 0);
+        if (extraSauceCount > 0){
+          parts.push(`Supplément sauces: +${formatEuro(extraSauceCount * EXTRA_SAUCE_PRICE)}`);
+        }
+      }
+
+      return parts.join(" • ");
+    }
+
+    function buildCartKey(id, config){
+      const category = getDishCategory(id);
+
+      if (category === "single"){
+        return `${id}__drink:${config.drink || "none"}`;
+      }
+
+      if (category === "box"){
+        const sauces = [...(config.sauces || [])].sort().join("+") || "none";
+        return `${id}__drink:${config.drink || "none"}__dessert:${config.dessert || "none"}__sauces:${sauces}`;
+      }
+
+      return id;
+    }
+
+    function cloneConfig(config){
+      return JSON.parse(JSON.stringify(config || {}));
+    }
+
     setAppHeight();
     window.addEventListener("resize", () => {
       setAppHeight();
@@ -1280,12 +1900,16 @@
       if (!item) return;
 
       selectedDish = id;
+      selectedConfig = getDefaultConfig(id);
+
       hotspots.forEach(el => el.classList.remove("active"));
       if (triggerEl) triggerEl.classList.add("active");
 
       modalTitle.textContent = item.name;
-      modalPrice.textContent = item.price;
       modalDesc.textContent = item.description;
+
+      renderModalOptions(id);
+      updateModalState();
 
       modal.classList.add("open");
       modal.setAttribute("aria-hidden", "false");
@@ -1294,6 +1918,10 @@
     function closeModal(){
       modal.classList.remove("open");
       modal.setAttribute("aria-hidden", "true");
+      modalOptions.innerHTML = "";
+      modalAlert.textContent = "";
+      modalAlert.classList.remove("show");
+      selectedConfig = null;
       hotspots.forEach(el => el.classList.remove("active"));
     }
 
@@ -1323,6 +1951,10 @@
       });
     });
 
+    modalOptions.addEventListener("change", () => {
+      updateModalState();
+    });
+
     closeModalBtn.addEventListener("click", closeModal);
 
     modal.addEventListener("click", (e) => {
@@ -1334,24 +1966,54 @@
     });
 
     function renderCart(){
-      const entries = Object.entries(cart);
-      const total = entries.reduce((sum, [, qty]) => sum + qty, 0);
-      cartCount.textContent = total;
+      const entries = Object.values(cart);
+      const totalQty = entries.reduce((sum, entry) => sum + entry.qty, 0);
+      cartCount.textContent = totalQty;
 
       if (!entries.length){
         cartItems.innerHTML = '<div class="cart-empty">Aucun article sélectionné.</div>';
         return;
       }
 
-      cartItems.innerHTML = entries.map(([id, qty]) => {
-        const item = DISHES[id];
-        return `<div class="cart-item">${item.name} × ${qty}</div>`;
+      cartItems.innerHTML = entries.map(entry => {
+        const item = DISHES[entry.id];
+        const summary = buildSelectionLabel(entry.id, entry.config);
+        const totalText = formatEuro(entry.lineTotal);
+
+        return `
+          <div class="cart-item">
+            ${item.name}
+            ${summary ? ` — ${summary}` : ""}
+            × ${entry.qty}
+          </div>
+        `;
       }).join("");
     }
 
     addToCartBtn.addEventListener("click", () => {
       if (!selectedDish) return;
-      cart[selectedDish] = (cart[selectedDish] || 0) + 1;
+
+      selectedConfig = readConfigFromModal(selectedDish);
+
+      if (!isModalSelectionValid(selectedDish, selectedConfig)){
+        updateModalState();
+        return;
+      }
+
+      const key = buildCartKey(selectedDish, selectedConfig);
+      const lineTotal = getItemTotal(selectedDish, selectedConfig);
+
+      if (cart[key]){
+        cart[key].qty += 1;
+      } else {
+        cart[key] = {
+          id: selectedDish,
+          config: cloneConfig(selectedConfig),
+          qty: 1,
+          lineTotal
+        };
+      }
+
       renderCart();
       pulseWhatsApp();
       closeModal();
@@ -1369,23 +2031,34 @@
     }
 
     whatsappBtn.addEventListener("click", () => {
-      const entries = Object.entries(cart);
+      const entries = Object.values(cart);
 
       if (!entries.length){
         alert("Veuillez d’abord ajouter au moins un article au panier.");
         return;
       }
 
-      const lines = entries.map(([id, qty], index) => {
-        const item = DISHES[id];
-        return `${index + 1}. ${item.name} x${qty}`;
+      const lines = entries.map((entry, index) => {
+        const item = DISHES[entry.id];
+        const summary = buildSelectionLabel(entry.id, entry.config);
+        const unitTotal = formatEuro(entry.lineTotal);
+
+        return [
+          `${index + 1}. ${item.name} x${entry.qty}`,
+          summary ? `   - ${summary}` : "",
+          `   - Prix unitaire: ${unitTotal}`
+        ].filter(Boolean).join("\n");
       });
+
+      const grandTotal = entries.reduce((sum, entry) => sum + (entry.lineTotal * entry.qty), 0);
 
       const message =
 `Bonjour Yamani Food,
 Je souhaite commander :
 
-${lines.join("\n")}
+${lines.join("\n\n")}
+
+Total estimé : ${formatEuro(grandTotal)}
 
 Merci !`;
 
